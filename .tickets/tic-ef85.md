@@ -1,4 +1,5 @@
 ---
+links: [v-wdyq, v-ugin]
 id: tic-ef85
 status: open
 type: feature
@@ -79,3 +80,36 @@ SDK integration (will be done in ticket MCP-4, not here):
 - Consider adding `DELETE /vault/session` for explicit logout/revocation
 - The MCP and SDK tickets depend on this endpoint existing before they can implement token-based auth
 
+
+## Notes
+
+**2026-03-22T00:39:04Z**
+
+## Updates from CLI/MCP brainstorm (2026-03-22)
+
+Based on designing the agent-friendly CLI (vultiagent-cli) and MCP server, the following additions are needed for this ticket:
+
+### Additional acceptance criteria needed
+
+- [ ] `DELETE /vault/session` endpoint for explicit token revocation (was in gotchas, should be required)
+- [ ] `POST /vault/session/refresh` endpoint — extends session without re-entering password (critical for long-running MCP server processes)
+- [ ] Token response includes `scope` field (e.g., "sign", "read") for future permission scoping
+- [ ] Error contract: expired token returns `{ "error": "TOKEN_EXPIRED", "code": 401 }` — distinct from invalid token `{ "error": "TOKEN_INVALID", "code": 401 }` so clients know whether to refresh or re-auth
+- [ ] Multiple concurrent sessions allowed per vault (one from CLI, one from MCP, one from chat app)
+- [ ] Rate limiting on `/vault/session` returns `Retry-After` header so clients can back off correctly
+
+### How CLI/MCP will consume this
+
+Phase 1 (now, stopgap): CLI stores raw vault password in OS system keyring, sends it to `/vault/sign` on each request. This works but means the password is cached locally.
+
+Phase 2 (when this ticket lands): CLI's `vasig auth` command exchanges password for session token via `POST /vault/session`, stores the token in keyring instead of the password. The credential resolution function changes from returning a password to returning a token. Small change in one function — the CLI/MCP architecture is designed for this upgrade.
+
+The MCP server is a long-running process — token refresh (`POST /vault/session/refresh`) is essential so it doesn't need to re-auth mid-session when the token expires.
+
+### Client-side integration points
+
+When this ships, changes needed in vultiagent-cli:
+- `auth/credential-store.ts` — `getServerCredential()` returns `{ type: 'session_token', token, expiresAt }` instead of `{ type: 'password', password }`
+- `vasig auth` — after password validation, calls `POST /vault/session` to exchange for token, stores token in keyring
+- `vasig auth status` — shows token expiry time
+- SDK's `ServerManager.coordinateFastSigning` — sends `session_token` field instead of `vault_password` (SDK change needed too)

@@ -94,6 +94,10 @@ Not a status update, everyone already knows status from the pulse. This is for:
 - **Pre-merge review required for**: key material, signing flows, address derivation. Tag someone and wait. This is the one area where speed isn't worth the risk.
 - Post-merge review is optional and pull-based. If you want to get across someone's changes, go read their PRs.
 
+### Main Stays Green
+
+If main is broken, fixing it is everyone's top priority, but especially whoever broke it. Drop what you're doing, revert or fix, then go back to your mission. Move fast, break things, but never leave main broken. A red CI that lingers slows down the whole team.
+
 ### Cross-Cutting Changes
 
 If your changes break interfaces or affect multiple areas, drop a quick Discord message: what changed, what breaks, and anything others need to do (re-pull, run a migration, update imports). Use judgment, a new file in your domain doesn't need an announcement.

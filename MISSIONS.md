@@ -26,6 +26,13 @@
 - **Domain**: Agent Backend
 - **Done looks like**: A document with: (1) token cost per operation type with real measurements, (2) proposed free tier limits with rationale, (3) subscription tier pricing with unit economics, (4) model-to-operation mapping (e.g. "balance queries can use Haiku, swaps need Sonnet") with accuracy tradeoff data.
 
+### Team Infra & Process Setup
+- **Goal**: Set up the operational foundations for the team. Unified linters/formatters across all repos (Biome for TS/JS, golangci-lint for Go). Automated daily team pulse (git activity digest to Discord). Centralised CLAUDE.md files so every repo inherits team conventions. Clean up hub repo — PROPOSAL.md is superseded, finalize TEAM-PROCESS.md and MISSIONS.md as the source of truth.
+- **Appetite**: 1 week
+- **Blocked by**: none
+- **Domain**: All
+- **Done looks like**: Every repo has consistent lint/format config. Daily automated digest is posting to Discord. Hub CLAUDE.md is inherited by all sub-repos, each sub-repo has its own for repo-specific context. Process docs are clean and current.
+
 ### Station App Takeover
 - **Goal**: Own the full Station wallet transition end-to-end. Three threads of work:
   1. **Migration safety**: Ship hype screen with clear messaging warning users to save their seed phrase before the app org transfer (they'll lose access to seeds tied to the current app). Make it impossible to miss.

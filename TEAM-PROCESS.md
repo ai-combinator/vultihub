@@ -6,16 +6,13 @@ We optimize for speed, AI-first workflows, and autonomy with alignment. No sprin
 
 ## Missions
 
-Shaped pieces of work with a clear goal and a timebox. Each mission has:
+Shaped pieces of work with a clear goal. Each mission has:
 
 - **Goal**: what "done" looks like
-- **Appetite**: how much time this is worth (a decision, not an estimate)
 - **Priority**: 1 (highest) through 3
 - **Blocked by**: other missions that must finish first, or "none"
-- **Boundaries**: what's in/out of scope
-- **Rabbit holes**: known traps to avoid
 
-When you finish a mission, pick the highest-priority unblocked mission available. Missions live in [MISSIONS.md](MISSIONS.md).
+When you finish a mission, pick the highest-priority unblocked mission available. Missions are tracked as [GitHub issues](https://github.com/ai-combinator/vultihub/issues).
 
 Engineers decompose missions however they want — BYO task tracking.
 

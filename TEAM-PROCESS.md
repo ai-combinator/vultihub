@@ -4,21 +4,6 @@ We optimize for speed, AI-first workflows, and autonomy with alignment. No sprin
 
 ---
 
-## Domains
-
-Areas of the system. Each engineer has a **primary** (decision-maker) and **secondary** (overflow, can land changes). Domains aren't walls — anyone commits anywhere. Domains determine who decides.
-
-| Domain | Scope |
-|--------|-------|
-| **SDK Core** | Chain logic, signing orchestration, types, configs |
-| **Agent Backend** | Go service, Claude integration, chat orchestration, conversation state |
-| **Client Surfaces** | vultiagent-app, Station wallet, Chrome extension, all UIs |
-| **External Access** | vasig CLI + MCP server, 3rd party SDK access |
-
-Assignments TBD.
-
----
-
 ## Missions
 
 Shaped pieces of work with a clear goal and a timebox. Each mission has:

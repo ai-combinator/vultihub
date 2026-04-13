@@ -17,5 +17,4 @@ mcp/
 .claude/*
 !.claude/skills/
 
-# Tickets
-.tickets/
+# Tickets tracked in git

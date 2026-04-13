@@ -1,6 +1,6 @@
 ---
 id: v-sdtg
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-07T05:04:53Z
@@ -140,3 +140,128 @@ The vultiagent-app client runs a multi-iteration auto-action loop in `doSend()` 
 ### MCP Server
 - Likely no changes — all tools already registered
 - Verify balance query tools work when called by backend
+
+## Notes
+
+**2026-04-08T04:31:45Z**
+
+## Design: Server-Orchestrated Tool Execution with Tool UI Registry
+
+### Problem
+Client runs a multi-iteration auto-action loop that creates up to 6 HTTP streams per user message, causes server/client state divergence, and produces visual bugs (duplicate messages, content swapping, layout jumping). Complex multi-tool flows are fragile because every client-side step is a separate stream and reconciliation point.
+
+### Solution
+Move all read/query/build operations server-side via MCP (one stream). Client-side actions (signing, vault creation) render as self-contained inline tool UI components instead of executing in a loop. Tool components optionally notify the server of results via a lightweight endpoint, not a new conversation message.
+
+### Architecture
+
+BEFORE (per message):
+  Client → Stream 1 → Server (Claude) → "get_balances" action
+  Client executes locally → Stream 2 → Server (Claude) → "build_swap" action
+  Client executes locally → Stream 3 → Server (Claude) → "sign_tx" action
+  Client executes locally → Stream 4 → Server (Claude) → "Done!"
+  (4 streams, 4 reconciliation points)
+
+AFTER (per message):
+  Client → Stream 1 → Server (Claude calls MCP: balance, route, build)
+    ← tool_progress: "Checking balances..."
+    ← tool_progress: "Finding best route..."
+    ← tool_progress: "Building transaction..."
+    ← tool_call: { name: "sign_tx", data: { unsignedTx, ... } }
+    ← text_delta: "Here's your swap: 1 SOL → 45 USDC"
+    ← done
+  Client renders SignTransaction component inline
+  User approves → component signs → component shows result
+  Component calls POST /tool-result (lightweight, no new stream)
+  (1 stream, 0 reconciliation)
+
+### Key decisions
+- No Vercel AI SDK — adapt ShapeShift's tool UI pattern to our existing SSE infra
+- No Zustand migration needed — current hook structure works fine
+- Nothing else uses this backend — safe to remove action types
+- Tool result feedback is opt-in per component (signing needs it, add_coin doesn't)
+- Confirmation flow actions (create_policy, cancel_scheduled_task, etc.) stay on existing actions pattern
+
+### Backend changes (agent-backend)
+
+**1. Remove read/query/build action types from prompt (prompt.go)**
+Remove from actions table: get_balances, get_portfolio, get_market_price, search_token, get_chains, get_chain_address, vault_info, get_coins, sign_in_status, build_send_tx, build_swap_tx, build_custom_tx, read_evm_contract, scan_tx, thorchain_query
+
+**2. Remove from autoExecutableActions (agent.go)**
+Remove: get_balances, get_portfolio, get_market_price, list_vaults
+
+**3. Emit tool_call SSE for remaining client-side actions**
+When Claude emits a client-side action via respond_to_user, backend emits as tool_call SSE event: { name, toolCallId, data }. Replaces actions event for these types.
+
+**4. Add POST /conversations/{id}/tool-result endpoint**
+Accepts { toolCallId, name, result }. Stores as conversation metadata (not a message). Claude picks it up as context on next user message. No Claude invocation triggered.
+
+**Keep in actions table:** create_policy, delete_policy, plugin_install, cancel_scheduled_task, address_book_add, address_book_remove, get_address_book, polymarket_sign_bet (confirmation flow pattern).
+
+### Frontend changes (vultiagent-app)
+
+**1. Tool execution hooks**
+- useExecuteOnce(toolCallId, executor) — single-execution guard (~20 lines)
+- useToolExecution(toolCallId) — step-based state machine: idle → executing → success|error, Zustand map keyed by toolCallId (~80 lines)
+
+**2. Tool UI registry (toolUIRegistry.ts)**
+Maps tool name → React component:
+- sign_tx → SignTransactionTool (from useTransactionSigning)
+- sign_typed_data → SignTypedDataTool (from useTransactionSigning)
+- create_vault → CreateVaultTool (from useAgentTools)
+- verify_vault_email → VerifyEmailTool (from useAgentTools)
+- import_vault → ImportVaultTool (from useVaultImport + AgentVaultImportCard)
+- add_coin → AddCoinTool (from useAgentTools)
+- remove_coin → RemoveCoinTool (from useAgentTools)
+- add_chain → AddChainTool (from useAgentTools)
+- remove_chain → RemoveChainTool (from useAgentTools)
+
+Each receives { toolCallId, data }, manages own lifecycle via useToolExecution, calls notifyToolResult on completion if server needs to know.
+
+**3. Wire tool_call SSE into message rendering**
+- sseEventProcessor.ts: handle tool_call events, store on message
+- Message bubble: look up registry, render component inline
+
+**4. Delete auto-action loop + legacy code**
+- useSendMessage.ts: delete while loop, doSend becomes send → stream → finalize (~50 lines)
+- useAgentTools.ts: delete executeAutoAction (~560 lines)
+- helpers.ts: delete AUTO_EXECUTE_ACTIONS + isAutoExecuteAction
+- agentClient.ts: delete reportActionResultStream, add notifyToolResult
+
+**5. Tool result notify behavior**
+| Tool | Notify server? | Why |
+| sign_tx / sign_typed_data | Yes | tx hash for future context |
+| create_vault | Yes | vault ID to continue conversation |
+| verify_vault_email | Yes | verification status |
+| import_vault | Yes | vault ID |
+| add_coin / remove_coin | No | local vault store only |
+| add_chain / remove_chain | No | local vault store only |
+
+### Current codebase state (as of 2026-04-08)
+Note: significant refactoring happened since ticket creation. Key differences:
+- useAgentChat decomposed into focused hooks (useSendMessage, useConversationManager, useVaultImport, etc.)
+- Auto-action loop is in useSendMessage.ts (315 lines), not useAgentChat.ts
+- No Zustand chatMessagesStore exists — useChatMessages.ts and useStreamingState.ts still present
+- useVaultImport.ts already extracted
+- tool_call SSE events already forwarded by agentClient.ts (currently no-op in sseEventProcessor.ts)
+- tool_progress already renders via TOOL_LABEL_MAP in sseEventProcessor.ts
+
+### Tasks
+
+1. **Backend: Remove read/query/build action types from prompt** — Remove ~15 types from actions table in prompt.go. Remove stale entries from autoExecutableActions in agent.go. (agent-backend, independent)
+
+2. **Backend: Emit tool_call SSE for client-side actions** — When respond_to_user contains a client-side action type, emit as tool_call SSE event with { name, toolCallId, data }. (agent-backend, depends on 1)
+
+3. **Backend: Add tool-result notify endpoint** — POST /conversations/{id}/tool-result, stores metadata without creating a message or invoking Claude. (agent-backend, independent)
+
+4. **Frontend: Create tool execution hooks** — useExecuteOnce and useToolExecution in src/features/agent/hooks/. (independent)
+
+5. **Frontend: Create tool UI registry + extract components** — Registry file + extract SignTransactionTool, CreateVaultTool, ImportVaultTool, VerifyEmailTool, AddCoinTool, RemoveCoinTool, AddChainTool, RemoveChainTool from existing code. (depends on 4)
+
+6. **Frontend: Wire tool_call SSE into message rendering** — Handle in sseEventProcessor.ts, render via registry in message bubble. (depends on 5)
+
+7. **Frontend: Delete auto-action loop + legacy code** — Remove while loop from useSendMessage.ts, gut useAgentTools.ts, remove AUTO_EXECUTE_ACTIONS/isAutoExecuteAction from helpers.ts, replace reportActionResultStream with notifyToolResult in agentClient.ts. (depends on 6)
+
+8. **Verify MCP tool coverage** — Confirm every removed action type has a working MCP equivalent. Test balance queries with vault public keys, build tools with contract addresses. (parallel with everything)
+
+Tasks 1, 3, 4, 8 are independent. Task 2 depends on 1. Tasks 5→6→7 are sequential. Backend (1-3) and frontend (4-7) can be developed in parallel.

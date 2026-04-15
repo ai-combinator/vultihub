@@ -21,5 +21,8 @@ Business logic goes in vultisig-sdk, not app/CLI/backend layers.
 - Biome for TS/JS — check each repo's package.json for the correct package manager (npm, yarn, or pnpm)
 - gofmt + golangci-lint for Go
 
+## Project Tracking
+GitHub Project "Vultiagent" is the source of truth for missions and task planning.
+
 ## Safety
 Changes to key material, signing flows, or address derivation require extra scrutiny. Flag in PR descriptions.

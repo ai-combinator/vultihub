@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vultiagent — Commercials &amp; Go-to-Market</title>
+
+    <!-- Fonts: Clash Display (display) + Satoshi (body) from Fontshare -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600;700&f[]=satoshi@400;500;700&display=swap" rel="stylesheet">
+    <!-- Fallback: JetBrains Mono for code/monospace accents -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (NEON CYBER THEME)
+           =========================================== */
+        :root {
+            /* Colors */
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #0f1629;
+            --bg-card: rgba(15, 22, 41, 0.8);
+            --text-primary: #e0e8ff;
+            --text-secondary: rgba(224, 232, 255, 0.65);
+            --text-muted: rgba(224, 232, 255, 0.35);
+            --cyan: #00ffcc;
+            --cyan-dim: rgba(0, 255, 204, 0.15);
+            --cyan-glow: rgba(0, 255, 204, 0.3);
+            --magenta: #ff00aa;
+            --magenta-dim: rgba(255, 0, 170, 0.15);
+            --magenta-glow: rgba(255, 0, 170, 0.3);
+            --blue: #4466ff;
+            --blue-dim: rgba(68, 102, 255, 0.15);
+            --amber: #ffaa00;
+            --amber-dim: rgba(255, 170, 0, 0.15);
+            --green: #39d353;
+            --green-dim: rgba(57, 211, 83, 0.15);
+            --red: #ff4466;
+            --red-dim: rgba(255, 68, 102, 0.15);
+
+            /* Typography — all clamp() */
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.5rem, 4vw, 3rem);
+            --h3-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            --body-size: clamp(0.8rem, 1.4vw, 1.125rem);
+            --small-size: clamp(0.8rem, 1.1vw, 1rem);
+            --mono-size: clamp(0.75rem, 1vw, 0.9rem);
+
+            /* Spacing */
+            --slide-padding: clamp(2rem, 5vw, 5rem);
+            --content-gap: clamp(1rem, 2.5vw, 2.5rem);
+            --element-gap: clamp(0.5rem, 1.2vw, 1.25rem);
+            --header-gap: clamp(0.5rem, 1vh, 1rem);
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        /* ===========================================
+           RESET
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===========================================
+           VIEWPORT BASE (MANDATORY)
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+            gap: var(--content-gap);
+        }
+        .card, .container, .content-box {
+            max-width: min(90vw, 1000px);
+            max-height: min(80vh, 700px);
+        }
+        .feature-list, .bullet-list {
+            gap: clamp(0.4rem, 1vh, 1rem);
+        }
+        .feature-list li, .bullet-list li {
+            font-size: var(--body-size);
+            line-height: 1.4;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+        img, .image-container {
+            max-width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: contain;
+        }
+
+        /* Short viewports */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(1rem, 3vw, 2.5rem);
+                --content-gap: clamp(0.5rem, 1.5vw, 1.25rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+                --body-size: clamp(0.75rem, 1.2vw, 1rem);
+                --small-size: clamp(0.7rem, 1vw, 0.9rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.4rem, 1vw, 1rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.1vw, 0.95rem);
+                --small-size: clamp(0.65rem, 0.9vw, 0.85rem);
+            }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+                --small-size: clamp(0.6rem, 0.85vw, 0.8rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ===========================================
+           GLOBAL STYLES
+           =========================================== */
+        body {
+            background: var(--bg-primary);
+            font-family: var(--font-body);
+            color: var(--text-primary);
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(0,255,204,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content { z-index: 1; }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: var(--header-gap);
+        }
+        h3 {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        p, li {
+            font-size: var(--body-size);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+
+        /* Phase badge */
+        .badge {
+            display: inline-block;
+            align-self: flex-start;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.35em 1.2em;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .badge--magenta { border-color: var(--magenta); color: var(--magenta); }
+        .badge--amber { border-color: var(--amber); color: var(--amber); }
+        .badge--blue { border-color: var(--blue); color: var(--blue); }
+        .badge--green { border-color: var(--green); color: var(--green); }
+
+        /* Feature cards */
+        .feature-grid {
+            display: grid;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        .feature-grid--3x2 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+        }
+        .feature-grid--2x2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .feature-grid--2x3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 700px) {
+            .feature-grid--3x2 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.8rem, 1.8vw, 1.5rem);
+            transition: border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: rgba(0, 255, 204, 0.25);
+        }
+        .feature-card h3 {
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.4rem);
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .feature-card .card-icon {
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.5rem);
+        }
+
+        /* Phase overview cards */
+        .phase-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+        }
+        @media (max-width: 600px) {
+            .phase-row { grid-template-columns: 1fr; }
+        }
+        .phase-card {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 16px);
+            padding: clamp(1.25rem, 2.5vw, 2rem);
+            border-left: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1vh, 0.75rem);
+        }
+        .phase-card--2 { border-left-color: var(--magenta); }
+        .phase-card--3 { border-left-color: var(--amber); }
+        .phase-card .phase-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        .phase-card--1 .phase-num { color: var(--cyan); }
+        .phase-card--2 .phase-num { color: var(--magenta); }
+        .phase-card--3 .phase-num { color: var(--amber); }
+        .phase-card h3 {
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+        }
+        .phase-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* Bullet list with glowing dots */
+        .glow-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.75rem, 1.5vh, 1.5rem);
+        }
+        .glow-list li {
+            padding-left: clamp(1rem, 2vw, 1.5rem);
+            position: relative;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .glow-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+        .glow-list--magenta li::before {
+            background: var(--magenta);
+            box-shadow: 0 0 8px var(--magenta-glow);
+        }
+        .glow-list--amber li::before {
+            background: var(--amber);
+            box-shadow: 0 0 8px rgba(255,170,0,0.3);
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            gap: clamp(2rem, 5vw, 5rem);
+        }
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: var(--cyan);
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-top: 0.3em;
+        }
+
+        /* Subtitle line */
+        .subtitle {
+            font-size: clamp(0.85rem, 1.5vw, 1.2rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Section description */
+        .section-desc {
+            max-width: min(65ch, 80vw);
+        }
+
+        /* ===========================================
+           TABLES
+           =========================================== */
+        .model-table {
+            width: 100%;
+            overflow: hidden;
+        }
+        .model-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--small-size);
+        }
+        .model-table th {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.15);
+        }
+        .model-table td {
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            font-size: var(--small-size);
+        }
+        .model-table td.mono {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .model-row--winner td {
+            color: var(--text-primary);
+        }
+        .model-row--veto td {
+            opacity: 0.5;
+        }
+        .verdict {
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.15em 0.5em;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .verdict--go { color: var(--cyan); background: var(--cyan-dim); }
+        .verdict--maybe { color: var(--amber); background: var(--amber-dim); }
+        .verdict--no { color: var(--magenta); background: var(--magenta-dim); }
+
+        /* Highlighted row */
+        .model-row--highlight td {
+            background: rgba(0, 255, 204, 0.04);
+        }
+
+        /* Methodology cards */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1vw, 0.75rem);
+        }
+        @media (max-width: 700px) {
+            .method-grid { grid-template-columns: 1fr; }
+        }
+        .method-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+        }
+        .method-card h3 {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);
+            color: var(--text-primary);
+        }
+        .method-card p {
+            font-size: var(--small-size);
+            line-height: 1.35;
+        }
+        .method-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--cyan);
+            letter-spacing: 0.1em;
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.2rem);
+        }
+
+        /* ===========================================
+           MISSION STATUS BADGES
+           =========================================== */
+        .status-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.75vw, 0.7rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.2em 0.6em;
+            border-radius: 3px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .status-badge--done { color: var(--green); background: var(--green-dim); }
+        .status-badge--progress { color: var(--cyan); background: var(--cyan-dim); }
+        .status-badge--open { color: var(--amber); background: var(--amber-dim); }
+        .status-badge--blocked { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p1 { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p2 { color: var(--blue); background: var(--blue-dim); }
+
+        /* Mission cards */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .mission-grid { grid-template-columns: 1fr; }
+        }
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .mission-card__header {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+            flex-wrap: wrap;
+        }
+        .mission-card__title {
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .mission-card__desc {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .mission-card__progress {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+        }
+        .progress-bar-mini {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-mini__fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.6s var(--ease-out-expo);
+        }
+        .progress-bar-mini__fill--green { background: var(--green); }
+        .progress-bar-mini__fill--cyan { background: var(--cyan); }
+        .progress-bar-mini__fill--amber { background: var(--amber); }
+        .progress-pct {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===========================================
+           CHECKLIST
+           =========================================== */
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.7vh, 0.6rem);
+        }
+        .check-list li {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            padding-left: clamp(1.2rem, 2vw, 1.5rem);
+            position: relative;
+            line-height: 1.4;
+        }
+        .check-list li::before {
+            position: absolute;
+            left: 0;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .check-list li.done { color: var(--text-muted); }
+        .check-list li.done::before { content: '✓'; color: var(--green); }
+        .check-list li.todo::before { content: '○'; color: var(--text-muted); }
+        .check-list li.wip::before { content: '◐'; color: var(--cyan); }
+
+        /* ===========================================
+           CALLOUT BOX
+           =========================================== */
+        .callout {
+            background: var(--bg-card);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+        }
+        .callout--cyan { border-color: rgba(0, 255, 204, 0.2); }
+        .callout--green { border-color: rgba(57, 211, 83, 0.2); background: rgba(57, 211, 83, 0.04); }
+        .callout--magenta { border-color: rgba(255, 0, 170, 0.2); }
+
+        /* ===========================================
+           OPTION COMPARISON (A vs B)
+           =========================================== */
+        .option-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .option-split { grid-template-columns: 1fr; }
+        }
+        .option-box {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-top: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .option-box--b { border-top-color: var(--magenta); }
+        .option-box__label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .option-box h3 {
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+        }
+
+        /* ===========================================
+           DEGRADATION TIMELINE
+           =========================================== */
+        .degrade-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.6rem, 1.2vh, 1rem);
+        }
+        .degrade-item {
+            display: grid;
+            grid-template-columns: clamp(3rem, 6vw, 5rem) 1fr;
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+            align-items: start;
+            padding-bottom: clamp(0.5rem, 1vh, 0.75rem);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .degrade-item:last-child { border-bottom: none; }
+        .degrade-pct {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .degrade-body h3 {
+            font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.15rem);
+        }
+        .degrade-body p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* ===========================================
+           SCROLL ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+        .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+
+        /* ===========================================
+           TITLE SLIDE
+           =========================================== */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .title-slide .slide-content {
+            align-items: center;
+            gap: clamp(0.75rem, 2vh, 2rem);
+        }
+        .title-slide .badge { align-self: center; }
+
+        .title-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            pointer-events: none;
+            animation: orbDrift 10s ease-in-out infinite;
+        }
+        .title-orb--1 {
+            width: clamp(200px, 30vw, 400px);
+            height: clamp(200px, 30vw, 400px);
+            background: var(--cyan);
+            top: 15%;
+            right: 15%;
+        }
+        .title-orb--2 {
+            width: clamp(150px, 25vw, 350px);
+            height: clamp(150px, 25vw, 350px);
+            background: var(--magenta);
+            bottom: 20%;
+            left: 15%;
+            animation-delay: -4s;
+        }
+        @keyframes orbDrift {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(15px, -20px); }
+            66% { transform: translate(-10px, 15px); }
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-meta {
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: scanMove 4s linear infinite;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes scanMove {
+            from { top: -2px; }
+            to { top: 100%; }
+        }
+
+        /* ===========================================
+           VISION SLIDE
+           =========================================== */
+        .vision-slide .slide-content {
+            align-items: center;
+            text-align: center;
+            gap: clamp(1.25rem, 3vh, 3rem);
+        }
+        .vision-slide .badge { align-self: center; }
+        .vision-quote {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            font-weight: 600;
+            line-height: 1.3;
+            max-width: min(55ch, 85vw);
+            background: linear-gradient(135deg, var(--text-primary), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            z-index: 1000;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 2vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 0.8vh, 10px);
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .nav-dot.active {
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan-glow);
+            transform: scale(1.3);
+        }
+
+        /* ===========================================
+           PARTICLES
+           =========================================== */
+        #particles {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: TITLE
+         =========================================== -->
+    <section class="slide title-slide" aria-label="Title">
+        <div class="title-orb title-orb--1"></div>
+        <div class="title-orb title-orb--2"></div>
+        <div class="scanline"></div>
+        <canvas id="particles"></canvas>
+
+        <div class="slide-content">
+            <div class="badge reveal">Commercials &amp; GTM</div>
+            <h1 class="title-gradient reveal">Vultiagent</h1>
+            <p class="subtitle reveal">Unified pricing model. How we price it. How we sell it.</p>
+            <p class="title-meta reveal">April 2026 / Internal</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: SECTION TRANSITION — COMMERCIALS
+         =========================================== -->
+    <section class="slide title-slide" aria-label="Commercials Section">
+        <div class="title-orb title-orb--1" style="opacity: 0.15;"></div>
+        <div class="title-orb title-orb--2" style="opacity: 0.15;"></div>
+
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h1 class="reveal" style="font-size: var(--h2-size); background: linear-gradient(135deg, var(--amber), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Unified Pricing Model</h1>
+            <p class="subtitle reveal" style="max-width: min(55ch, 80vw);">What each model costs us. What users pay. How VULT holding fits in. How we degrade gracefully. What we still need to decide.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: MODEL BENCHMARKING (CONSOLIDATED)
+         =========================================== -->
+    <section class="slide" aria-label="Model Benchmarking">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h2 class="reveal">What Each Model Costs Us</h2>
+            <p class="section-desc reveal">339 API calls, 13 operation types, real agent backend with 66 live MCP tools. Three models survive.</p>
+
+            <div class="model-table reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Avg Cost/Op</th>
+                            <th>Latency</th>
+                            <th>Success</th>
+                            <th>Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="model-row--winner">
+                            <td>Gemini 2.5 Flash</td>
+                            <td class="mono">$0.003</td>
+                            <td class="mono">3.2s</td>
+                            <td class="mono">100%</td>
+                            <td><span class="verdict verdict--go">Workhorse</span></td>
+                        </tr>
+                        <tr class="model-row--winner">
+                            <td>Claude Haiku 4.5</td>
+                            <td class="mono">$0.029</td>
+                            <td class="mono">5.7s</td>
+                            <td class="mono">100%</td>
+                            <td><span class="verdict verdict--go">Mid-Tier</span></td>
+                        </tr>
+                        <tr class="model-row--winner">
+                            <td>Claude Sonnet 4</td>
+                            <td class="mono">$0.134</td>
+                            <td class="mono">6.8s</td>
+                            <td class="mono">100%</td>
+                            <td><span class="verdict verdict--go">Premium</span></td>
+                        </tr>
+                        <tr class="model-row--veto">
+                            <td>DeepSeek V3.2</td>
+                            <td class="mono">$0.013</td>
+                            <td class="mono">17.6s</td>
+                            <td class="mono">100%</td>
+                            <td><span class="verdict verdict--maybe">Too Slow</span></td>
+                        </tr>
+                        <tr class="model-row--veto">
+                            <td>Llama 4 Maverick</td>
+                            <td class="mono">$0.004</td>
+                            <td class="mono">3.1s</td>
+                            <td class="mono">97%</td>
+                            <td><span class="verdict verdict--no">Leaks Syntax</span></td>
+                        </tr>
+                        <tr class="model-row--veto">
+                            <td>Claude Opus 4</td>
+                            <td class="mono">$0.065</td>
+                            <td class="mono">14.0s</td>
+                            <td class="mono">100%</td>
+                            <td><span class="verdict verdict--no">$20 in 7min</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout callout--cyan reveal" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(0.5rem, 1.5vw, 1.25rem);">
+                <div>
+                    <h3 style="color: var(--cyan); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Prompt Trimming</h3>
+                    <p style="font-size: var(--small-size);">82% of every request is fixed overhead. Filter tools by intent to halve all costs.</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--amber); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Prompt Caching</h3>
+                    <p style="font-size: var(--small-size);">Anthropic cache hit = 65% further reduction on Haiku/Sonnet. Ships Phase 2.</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--magenta); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Keyword Pre-Router</h3>
+                    <p style="font-size: var(--small-size);">Regex classifier for obvious intents. Skips Haiku routing call on 80%+ of traffic.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: MODEL × TIER MATRIX
+         =========================================== -->
+    <section class="slide" aria-label="Model Tier Matrix">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h2 class="reveal">Who Gets Access to What</h2>
+            <p class="section-desc reveal">Three models mapped to capabilities. Free users get a Watt budget. Premium/Pro unlock advanced features.</p>
+
+            <div class="model-table reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Model</th>
+                            <th>Free</th>
+                            <th style="color: var(--magenta);">Premium</th>
+                            <th style="color: var(--amber);">Pro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="color: var(--text-primary);">Chat, balance, price</td>
+                            <td><span class="verdict verdict--go">Flash</span></td>
+                            <td>Yes (from budget)</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Send, swap, bridge (MCP)</td>
+                            <td><span class="verdict verdict--go">Flash</span></td>
+                            <td>Yes (from budget)</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Basic DeFi (deposit/withdraw)</td>
+                            <td><span class="verdict verdict--go">Flash</span></td>
+                            <td>Yes (from budget)</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr style="border-top: 1px solid rgba(255,0,170,0.15);">
+                            <td style="color: var(--text-primary);">Planning mode</td>
+                            <td><span class="verdict verdict--maybe">Haiku</span></td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--magenta);">Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Cron scheduling</td>
+                            <td><span class="verdict verdict--maybe">Haiku</span></td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--magenta);">Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Monitoring / alert evaluation</td>
+                            <td><span class="verdict verdict--maybe">Haiku</span></td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--magenta);">Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr style="border-top: 1px solid rgba(255,170,0,0.15);">
+                            <td style="color: var(--text-primary);">Strategy / portfolio analysis</td>
+                            <td><span class="verdict verdict--no">Sonnet</span></td>
+                            <td style="color: var(--text-muted);">Taste*</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Autonomous agents</td>
+                            <td><span class="verdict verdict--no">Sonnet</span></td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--amber);">Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Stop-loss / TWAP</td>
+                            <td><span class="verdict verdict--no">Sonnet</span></td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--text-muted);">No</td>
+                            <td style="color: var(--amber);">Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">*Free users can taste Sonnet through their budget (~4 strategy queries). The hook &mdash; Sonnet answers are noticeably better, creating upgrade desire.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 9: WATTS PRICING
+         =========================================== -->
+    <section class="slide" aria-label="Watts Pricing">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h2 class="reveal">What Users See: Watts <span style="font-size: var(--mono-size); font-family: var(--font-mono); color: var(--amber); vertical-align: middle;">(NAME TBD)</span></h2>
+            <p class="section-desc reveal">Each tier comes with a monthly Watt budget. Operations cost Watts, not dollars. Users think in Watts, we think in margins. <span style="color: var(--text-muted);">1 Watt &asymp; $0.01 &mdash; the agent's energy currency for AI operations.</span></p>
+
+            <div class="phase-row reveal">
+                <div class="phase-card phase-card--1">
+                    <span class="phase-num">Free</span>
+                    <h3>Explorer</h3>
+                    <p style="font-family: var(--font-display); font-size: var(--h3-size); color: var(--text-primary); margin-bottom: clamp(0.2rem, 0.4vh, 0.3rem);">$0</p>
+                    <p style="font-size: var(--small-size);"><strong style="color: var(--text-primary);">200 W/mo</strong></p>
+                    <p style="font-size: var(--small-size);">Chat, balances, sends, swaps, basic DeFi</p>
+                    <p style="font-size: var(--small-size);">~250 Flash ops or ~4 Sonnet queries</p>
+                    <p style="font-size: var(--small-size); color: var(--text-muted);">After budget: degrades, never locks out</p>
+                </div>
+                <div class="phase-card phase-card--2">
+                    <span class="phase-num" style="color: var(--magenta);">Premium</span>
+                    <h3>Active Trader</h3>
+                    <p style="font-family: var(--font-display); font-size: var(--h3-size); color: var(--text-primary); margin-bottom: clamp(0.2rem, 0.4vh, 0.3rem);">$9.99<span style="font-size: var(--small-size); color: var(--text-secondary);"> /mo</span></p>
+                    <p style="font-size: var(--small-size);"><strong style="color: var(--text-primary);">1,000 W/mo</strong></p>
+                    <p style="font-size: var(--small-size);">Everything in Free + planning, crons, monitoring, strategy</p>
+                    <p style="font-size: var(--small-size);">Haiku + Sonnet unlocked</p>
+                    <p style="font-size: var(--small-size); color: var(--text-muted);">After budget: graceful downgrade</p>
+                </div>
+                <div class="phase-card phase-card--3">
+                    <span class="phase-num">Pro</span>
+                    <h3>Power User</h3>
+                    <p style="font-family: var(--font-display); font-size: var(--h3-size); color: var(--text-primary); margin-bottom: clamp(0.2rem, 0.4vh, 0.3rem);">$29.99<span style="font-size: var(--small-size); color: var(--text-secondary);"> /mo</span></p>
+                    <p style="font-size: var(--small-size);"><strong style="color: var(--text-primary);">5,000 W/mo</strong></p>
+                    <p style="font-size: var(--small-size);">Everything in Premium + autonomous agents, stop-loss, TWAP</p>
+                    <p style="font-size: var(--small-size);">Full Sonnet access</p>
+                    <p style="font-size: var(--small-size); color: var(--text-muted);">Credit packs for overages</p>
+                </div>
+            </div>
+
+            <div class="callout callout--cyan reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.5rem, 1.5vw, 1.25rem);">
+                <div>
+                    <h3 style="color: var(--cyan); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Why Watts, Not Dollars</h3>
+                    <p style="font-size: var(--small-size);">Dollar amounts create micro-loss anxiety on every action. An abstracted currency (like Robux, airline miles, game gems) reduces spending friction while maintaining a real cost floor. Crypto users are financially sophisticated &mdash; they'll appreciate knowing 1W &asymp; $0.01 without seeing "$0.25 deducted" every swap.</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--amber); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Watt Costs by Operation</h3>
+                    <p style="font-size: var(--small-size);">Flash ops (chat, balance, send): <strong style="color: var(--text-primary);">1W</strong>. Haiku ops (planning, crons): <strong style="color: var(--text-primary);">3W</strong>. Sonnet ops (strategy, autonomous): <strong style="color: var(--text-primary);">15W</strong>. First-time action: agent tells you the cost once, then never asks again.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 10: VULT HOLDING = UNIFIED BENEFITS
+         =========================================== -->
+    <section class="slide" aria-label="VULT Holding">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Token Alignment</div>
+            <h2 class="reveal">VULT Holding = Unified Benefits</h2>
+            <p class="section-desc reveal">Same VULT you hold for fee reduction also unlocks agent features. One system, not two. Two models under consideration:</p>
+
+            <div class="option-split reveal">
+                <div class="option-box">
+                    <span class="option-box__label" style="color: var(--cyan);">Option A &mdash; Pure Tiers (paaao)</span>
+                    <h3>Tier Unlock Only, No Bonus Watts</h3>
+                    <p style="font-size: var(--small-size); line-height: 1.35; color: var(--text-secondary);">Holding VULT gives fee discounts + agent tier unlock. No bonus Watts. Simple, aligned with core app. Platinum+ get the full subscription value for free.</p>
+                    <div class="model-table" style="margin-top: clamp(0.3rem, 0.5vh, 0.4rem);">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>VULT</th>
+                                    <th>Fee</th>
+                                    <th>Agent</th>
+                                    <th>Saves</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Bronze</td><td class="mono">1,500</td><td class="mono">45bp</td><td>Free</td><td class="mono" style="color: var(--text-muted);">&mdash;</td></tr>
+                                <tr><td>Silver</td><td class="mono">3,000</td><td class="mono">40bp</td><td>Free</td><td class="mono" style="color: var(--text-muted);">&mdash;</td></tr>
+                                <tr><td>Gold</td><td class="mono">7,500</td><td class="mono">30bp</td><td>Free</td><td class="mono" style="color: var(--text-muted);">&mdash;</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--magenta);">Plat</td><td class="mono">15,000</td><td class="mono">25bp</td><td style="color: var(--magenta);">Prem</td><td class="mono" style="color: var(--cyan);">$9.99/mo</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--amber);">Diamond</td><td class="mono">100,000</td><td class="mono">15bp</td><td style="color: var(--amber);">Pro</td><td class="mono" style="color: var(--cyan);">$29.99/mo</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--amber);">Ultimate</td><td class="mono">1,000,000</td><td class="mono">0bp</td><td style="color: var(--amber);">Pro+</td><td class="mono" style="color: var(--cyan);">$29.99/mo</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="option-box option-box--b">
+                    <span class="option-box__label" style="color: var(--magenta);">Option B &mdash; Sliding Scale + Kickers</span>
+                    <h3>Continuous Curve with Tier Milestones</h3>
+                    <p style="font-size: var(--small-size); line-height: 1.35; color: var(--text-secondary);">Every VULT earns Watts on a diminishing curve. At each tier threshold, a milestone kicker rounds up to a clean number. Fee discounts still apply at tiers.</p>
+                    <div class="model-table" style="margin-top: clamp(0.3rem, 0.5vh, 0.4rem);">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>VULT</th>
+                                    <th>Curve</th>
+                                    <th>Kicker</th>
+                                    <th>Total W/mo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td style="color: var(--text-muted);">&mdash;</td><td class="mono">500</td><td class="mono">6</td><td class="mono" style="color: var(--text-muted);">&mdash;</td><td class="mono" style="color: var(--magenta);">6</td></tr>
+                                <tr><td>Bronze</td><td class="mono">1,500</td><td class="mono">13</td><td class="mono" style="color: var(--cyan);">+12</td><td class="mono" style="color: var(--magenta);">25</td></tr>
+                                <tr><td>Silver</td><td class="mono">3,000</td><td class="mono">20</td><td class="mono" style="color: var(--cyan);">+30</td><td class="mono" style="color: var(--magenta);">50</td></tr>
+                                <tr><td>Gold</td><td class="mono">7,500</td><td class="mono">39</td><td class="mono" style="color: var(--cyan);">+36</td><td class="mono" style="color: var(--magenta);">75</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--magenta);">Plat</td><td class="mono">15,000</td><td class="mono">61</td><td class="mono" style="color: var(--cyan);">+64</td><td class="mono" style="color: var(--magenta);">125</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--amber);">Diamond</td><td class="mono">100,000</td><td class="mono">201</td><td class="mono" style="color: var(--cyan);">+199</td><td class="mono" style="color: var(--magenta);">400</td></tr>
+                                <tr class="model-row--highlight"><td style="color: var(--amber);">Ultimate</td><td class="mono">1,000,000</td><td class="mono">832</td><td class="mono" style="color: var(--cyan);">+668</td><td class="mono" style="color: var(--magenta);">1,500</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); margin-top: clamp(0.15rem, 0.3vh, 0.2rem);">Curve: 10 &times; (vult / 1000)<sup>0.65</sup>. Between tiers: raw curve value. At tiers: snaps to round milestone.</p>
+                </div>
+            </div>
+
+            <div class="callout reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.5rem, 1.5vw, 1.25rem);">
+                <div>
+                    <h3 style="color: var(--cyan); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">One System</h3>
+                    <p style="font-size: var(--small-size);">Hold VULT &rarr; lower swap fees AND agent tier unlock. No separate staking mechanism at launch. Users understand "hold more VULT = better everything."</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--amber); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">VULT Holders Still Pay AI Cost</h3>
+                    <p style="font-size: var(--small-size);">Platinum+ holders who unlock tiers via holding still get the AI budget. This costs us real money but drives token demand. Swap fees go to VULT buyback &mdash; virtuous cycle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 11: GRACEFUL DEGRADATION + FIRST-TIME UX
+         =========================================== -->
+    <section class="slide" aria-label="Graceful Degradation">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h2 class="reveal">Never Hard-Stop. Always Degrade Gracefully.</h2>
+            <p class="section-desc reveal">Market best practice (Cursor, OpenAI): never leave users with zero functionality.</p>
+
+            <div class="degrade-list reveal">
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--cyan);">75%</div>
+                    <div class="degrade-body">
+                        <h3>Gentle nudge</h3>
+                        <p>"You've used 75% of your monthly tokens. Upgrade to Premium for 5x more."</p>
+                    </div>
+                </div>
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--amber);">100%</div>
+                    <div class="degrade-body">
+                        <h3>Budget depleted &mdash; Sonnet/Haiku disabled</h3>
+                        <p>Reasoning and planning queries return: "This needs our advanced AI. Top up 200 tokens for $2.49 or upgrade to continue."</p>
+                    </div>
+                </div>
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--amber);">100%</div>
+                    <div class="degrade-body">
+                        <h3>Basic ops continue on Flash (degraded)</h3>
+                        <p>Simple swaps, sends, and balance checks keep working but with slower, simpler responses. User never loses access to core wallet functionality.</p>
+                    </div>
+                </div>
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--magenta);">150%</div>
+                    <div class="degrade-body">
+                        <h3>Hard stop on all AI (emergency only)</h3>
+                        <p>Only if user is burning through degraded ops at extreme rate. Manual wallet functions in core app always available.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout callout--cyan reveal">
+                <h3 style="color: var(--cyan); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">First-Time Action UX</h3>
+                <p style="font-size: var(--small-size);">First time a user triggers any action type, the agent says: <em>"This is your first swap &mdash; just so you know, swaps use 3 Watts per operation. You have 197 remaining. Continue?"</em> Then never asks again. Users can always check costs by asking the agent directly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 12: CREDIT PACKS + UNIT ECONOMICS
+         =========================================== -->
+    <section class="slide" aria-label="Credit Packs and Economics">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Cost &amp; Pricing</div>
+            <h2 class="reveal">Credit Packs &amp; Unit Economics</h2>
+            <p class="section-desc reveal">Top-up packs for when budget runs out. 20&ndash;25% markup on small packs, tapering to 10% on large. Volume discount drives upgrades.</p>
+
+            <div class="feature-grid feature-grid--2x2 reveal">
+                <div class="feature-card" style="border-left: 3px solid var(--cyan);">
+                    <h3 style="color: var(--cyan);">Credit Packs</h3>
+                    <div class="model-table" style="margin-top: clamp(0.2rem, 0.4vh, 0.3rem);">
+                        <table>
+                            <thead><tr><th>Pack</th><th>Tokens</th><th>Price</th><th>Per Tkn</th></tr></thead>
+                            <tbody>
+                                <tr><td>Starter</td><td class="mono">200</td><td class="mono">$2.49</td><td class="mono">$0.0125</td></tr>
+                                <tr><td>Standard</td><td class="mono">500</td><td class="mono">$5.99</td><td class="mono">$0.012</td></tr>
+                                <tr><td>Large</td><td class="mono">1,000</td><td class="mono">$10.99</td><td class="mono">$0.011</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); margin-top: clamp(0.2rem, 0.4vh, 0.3rem);">Large pack priced near subscription intentionally &mdash; gateway to upgrading.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Unit Economics at 10K Users</h3>
+                    <div class="model-table" style="margin-top: clamp(0.2rem, 0.4vh, 0.3rem);">
+                        <table>
+                            <thead><tr><th>Segment</th><th>Users</th><th>Revenue</th><th>Net</th></tr></thead>
+                            <tbody>
+                                <tr><td><span style="color: var(--text-muted);">Free (80%)</span></td><td class="mono">8,000</td><td class="mono">$0</td><td class="mono" style="color: var(--magenta);">-$6.2K</td></tr>
+                                <tr><td><span style="color: var(--magenta);">Premium (15%)</span></td><td class="mono">1,500</td><td class="mono">$15.0K</td><td class="mono" style="color: var(--green);">+$6.3K</td></tr>
+                                <tr><td><span style="color: var(--amber);">Pro (5%)</span></td><td class="mono">500</td><td class="mono">$15.0K</td><td class="mono" style="color: var(--green);">+$5.4K</td></tr>
+                                <tr style="border-top: 1px solid rgba(0,255,204,0.15);"><td><strong>Total</strong></td><td class="mono">10,000</td><td class="mono" style="color: var(--text-primary);"><strong>$30.0K</strong></td><td class="mono" style="color: var(--cyan);"><strong>+$5.5K</strong></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); margin-top: clamp(0.2rem, 0.4vh, 0.3rem);">Cashflow positive at worst case. Real utilization (40&ndash;60%) pushes net to ~$15&ndash;20K/mo.</p>
+                </div>
+            </div>
+
+            <div class="callout callout--green reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.5rem, 1.5vw, 1.25rem);">
+                <div>
+                    <h3 style="color: var(--green); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Swap/Bridge Fees &rarr; VULT</h3>
+                    <p style="font-size: var(--small-size);">All swap fees go to VULT buyback/burn. ~$14K/mo at 10K user volumes. Separate from team cashflow but critical for token ecosystem health.</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--cyan); font-size: var(--body-size); margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);">Large Pack = Upgrade Gateway</h3>
+                    <p style="font-size: var(--small-size);">The 1,000W pack at $10.99 is intentionally priced near the $9.99/mo Premium sub. Users doing repeat top-ups realize the subscription is better value &mdash; natural conversion funnel.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 13: REVENUE BEYOND SUBSCRIPTIONS
+         =========================================== -->
+    <section class="slide" aria-label="Revenue Beyond Subscriptions">
+        <div class="slide-content">
+            <div class="badge badge--amber reveal">Business Model</div>
+            <h2 class="reveal">Revenue Beyond Subscriptions</h2>
+            <p class="section-desc reveal">Consumer subs are the floor. The MCP server turns Vulti Agent from an app into infrastructure.</p>
+
+            <div class="model-table reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Revenue Stream</th>
+                            <th>Phase</th>
+                            <th>Model</th>
+                            <th>Year 1 Potential</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="color: var(--text-primary);">Consumer subs</td>
+                            <td class="mono">1</td>
+                            <td>Free / $9.99 Prem / $29.99 Pro</td>
+                            <td class="mono">$360K&ndash;$1.8M</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Credit packs</td>
+                            <td class="mono">1</td>
+                            <td>$2.49&ndash;$10.99 top-ups</td>
+                            <td class="mono">Scales w/ usage</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Swap/bridge fees</td>
+                            <td class="mono">1</td>
+                            <td>15&ndash;50bps &rarr; VULT buyback</td>
+                            <td class="mono">Token value</td>
+                        </tr>
+                        <tr class="model-row--winner">
+                            <td style="color: var(--cyan);">API / MCP licensing</td>
+                            <td class="mono">1</td>
+                            <td>1K free calls/mo, $0.005&ndash;0.01/call</td>
+                            <td class="mono" style="color: var(--cyan);">$500K&ndash;900K</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Ecosystem grants</td>
+                            <td class="mono">1</td>
+                            <td>Chain grant programs (Sui, Base, Sei)</td>
+                            <td class="mono">$500K&ndash;1M</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">White-label wallet</td>
+                            <td class="mono">2</td>
+                            <td>Per-active-wallet + integration fees</td>
+                            <td class="mono">$200K&ndash;500K</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--text-primary);">Enterprise DAO custody</td>
+                            <td class="mono">3</td>
+                            <td>Annual SaaS, AI-native multisig</td>
+                            <td class="mono">$250K&ndash;500K</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stats-row reveal" style="margin-top: clamp(0.5rem, 1vh, 0.75rem);">
+                <div>
+                    <div class="stat-value" style="color: var(--cyan);">$1.5&ndash;3M</div>
+                    <div class="stat-label">Year 1 Diversified</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--amber);">@vultisig/mcp</div>
+                    <div class="stat-label">B2B Asset Built</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--magenta);">$25B+</div>
+                    <div class="stat-label">DAO Treasury TAM</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 14: OPEN QUESTIONS
+         =========================================== -->
+    <section class="slide" aria-label="Open Questions">
+        <div class="slide-content">
+            <div class="badge badge--magenta reveal">Discussion</div>
+            <h2 class="reveal">Open Questions for the Team</h2>
+
+            <div class="feature-grid feature-grid--2x3 reveal">
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">VULT Bonus: Tiers or Curve?</h3>
+                    <p>Option A (tier thresholds) is simpler and aligned with existing app. Option B (sliding scale) rewards any accumulation but adds complexity. Can we hybrid &mdash; tier unlocks + small continuous drip?</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">$2 Free Budget: Right Number?</h3>
+                    <p>200 W/mo lets casual users feel free but costs us ~$0.78/user/mo (after markup). For 8K free users = $6.2K/mo burn. Should it be $1.50? $1? Need utilization data.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Flash Tool Reliability</h3>
+                    <p>Can Gemini 2.5 Flash reliably execute our 22 MCP tools? Need to test top 10 flows for reliability &amp; latency. If &lt;95% success, cheap models save nothing if swaps fail.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Can We Afford Free Watts for VULT Holders?</h3>
+                    <p>Both options give Platinum+ holders free AI access. How many Platinum+ holders exist today? What's the real AI cost to subsidize them? At what holder count does it become unsustainable? Need data from core app.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Degradation vs Hard Stop</h3>
+                    <p>When free budget depletes: continue basic Flash ops (costs us, keeps user happy) or hard stop everything (saves money, risks churn)? Recommend: continue basic ops, gate Sonnet/Haiku.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Credit Pack Pricing</h3>
+                    <p>$2.49 for 200W / $5.99 for 500W / $10.99 for 1,000W. Large pack intentionally near sub price as upgrade gateway. Right markup? Too high risks churn, too low and nobody subscribes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE: NEW MISSION — BILLING INFRASTRUCTURE
+         =========================================== -->
+    <section class="slide" aria-label="Mission 14 Billing">
+        <div class="slide-content">
+            <div class="badge badge--green reveal">Mission #14</div>
+            <h2 class="reveal">Billing &amp; Token Gating Infrastructure</h2>
+            <p class="section-desc reveal">Everything needed to ship Watt budgets. Validates the pricing model with real data, then enforces it.</p>
+
+            <div class="feature-grid feature-grid--2x2 reveal">
+                <div class="feature-card" style="border-left: 3px solid var(--cyan);">
+                    <h3 style="color: var(--cyan);">1. Flash Reliability Testing</h3>
+                    <p>Run top 10 tool flows against Gemini 2.5 Flash. Measure success rate and latency per operation. Target &gt;95%. If Flash can't reliably execute our MCP tools, the cost model doesn't work.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--cyan);">
+                    <h3 style="color: var(--cyan);">2. Measure Token Cost per Operation</h3>
+                    <p>Instrument the agent to log LLM token counts per action type. Calculate real per-op costs across Flash, Haiku, Sonnet. Map each operation to its Watt price.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--magenta);">
+                    <h3 style="color: var(--magenta);">3. Keyword Pre-Router</h3>
+                    <p>Regex/keyword classifier for obvious intents (balance check, simple send). Routes directly to Flash, skipping the Haiku classification call on 80%+ of traffic.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--magenta);">
+                    <h3 style="color: var(--magenta);">4. Token Gating System</h3>
+                    <p>Track per-user Watt balance. Deduct on each operation. Enforce tier access &mdash; gate Haiku/Sonnet features when budget depleted. Graceful degradation to Flash. Credit pack purchase flow.</p>
+                </div>
+            </div>
+
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">Steps 1&ndash;2 are prerequisites &mdash; we need real cost data before committing to Watt prices. Steps 3&ndash;4 are the billing system itself.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE: SECTION TRANSITION — GO TO MARKET
+         =========================================== -->
+    <section class="slide title-slide" aria-label="Go to Market Section">
+        <div class="title-orb title-orb--1" style="opacity: 0.15;"></div>
+        <div class="title-orb title-orb--2" style="opacity: 0.15;"></div>
+
+        <div class="slide-content">
+            <div class="badge reveal">Go to Market</div>
+            <h1 class="reveal" style="font-size: var(--h2-size); background: linear-gradient(135deg, var(--cyan), var(--magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">How We Get Users</h1>
+            <p class="subtitle reveal" style="max-width: min(55ch, 80vw);">Rename in-place like Trust Wallet did. Let the product demo itself like ChatGPT did. Let engineers be the brand like Uniswap and Monad did.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 16: STATION REBRAND PLAYBOOK
+         =========================================== -->
+    <section class="slide" aria-label="Station Rebrand">
+        <div class="slide-content">
+            <div class="badge reveal">Go to Market</div>
+            <h2 class="reveal">Station &rarr; Vulti Agent</h2>
+            <p class="section-desc reveal">Trust Wallet and MyEtherWallet both renamed app listings in-place during rebrands, preserved ratings, downloads, and user base.</p>
+
+            <div class="degrade-list reveal">
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--cyan); font-size: clamp(0.85rem, 1.5vw, 1.2rem);">Now</div>
+                    <div class="degrade-body">
+                        <h3>Tease the Rebrand</h3>
+                        <p>Hype screen in Station app: "Something is coming." Station X account teases. In-app countdown banner with email capture.</p>
+                    </div>
+                </div>
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--magenta); font-size: clamp(0.85rem, 1.5vw, 1.2rem);">Wk 2</div>
+                    <div class="degrade-body">
+                        <h3>Founder Thread + Rename</h3>
+                        <p>Vultisig founder thread on X: "We acquired Station because it had the user base. Now we're giving it an AI brain." App listing renamed: "Vulti Agent (formerly Station)." Early access to 15&ndash;20 mid-tier crypto influencers.</p>
+                    </div>
+                </div>
+                <div class="degrade-item">
+                    <div class="degrade-pct" style="color: var(--amber); font-size: clamp(0.85rem, 1.5vw, 1.2rem);">Wk 3</div>
+                    <div class="degrade-body">
+                        <h3>Ship the Update</h3>
+                        <p>Agentic wallet update to Station users. Early Supporter on-chain attestation for first-week updaters. "Formerly Station" in subtitle for 2&ndash;3 months, then drop.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 17: AI DEMO IS MARKETING
+         =========================================== -->
+    <section class="slide" aria-label="Differentiation">
+        <div class="slide-content">
+            <div class="badge reveal">Go to Market</div>
+            <h2 class="reveal">The AI Demo Is the Marketing</h2>
+            <p class="section-desc reveal">ChatGPT grew because people shared screenshots of outputs. Nobody else has a natural language wallet. Every demo is marketing.</p>
+
+            <div class="feature-grid feature-grid--2x2 reveal">
+                <div class="feature-card">
+                    <h3>Short-Form Demos</h3>
+                    <p>"I asked my wallet to swap ETH to USDC and it did it." Side-by-side: 8 clicks in MetaMask vs. 1 sentence in Vulti Agent.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>MPC Security Narrative</h3>
+                    <p>"No seed phrase. Keys split across devices with threshold cryptography." Fireblocks built $8B on "institutional-grade MPC" &mdash; we bring it to consumers.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>MCP as Distribution</h3>
+                    <p>Every AI assistant that connects via MCP becomes a channel. List on agent directories, partner with frameworks (CrewAI, LangChain). The protocol is the moat.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>AI &times; Crypto Positioning</h3>
+                    <p>AI agent platforms need wallet infrastructure. Our MCP server lets any AI agent manage a wallet &mdash; positioning us as the default wallet layer for AI agents.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 18: BUILDER-LED MARKETING
+         =========================================== -->
+    <section class="slide" aria-label="Builder-Led Marketing">
+        <div class="slide-content">
+            <div class="badge badge--magenta reveal">Builder-Led Marketing</div>
+            <h2 class="reveal">Engineers Are the Brand</h2>
+            <p class="section-desc reveal">In crypto, technical depth signals legitimacy. Monad, Eigenlayer, and Uniswap grew through engineers posting technical content.</p>
+
+            <div class="feature-grid feature-grid--2x2 reveal">
+                <div class="feature-card" style="border-left: 3px solid var(--cyan);">
+                    <h3 style="color: var(--cyan);">@vultisig: 1 Thread / Week</h3>
+                    <p>Every Friday: "what we shipped" thread with screenshots or demo clip. Owned by community manager, sourced from engineers. One substantive thread beats seven filler posts.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--magenta);">
+                    <h3 style="color: var(--magenta);">Engineers Post When Interesting</h3>
+                    <p>No schedule, no quota. Cool bug, nice before/after, wild edge case &mdash; post it, tag @vultisig. Authenticity &gt; consistency.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">"Building @vultisig" in Bios</h3>
+                    <p>One brand, one audience. Every engineer's bio links to @vultisig. Pinned tweet explains Vulti Agent. Every personal post passively drives discovery.</p>
+                </div>
+                <div class="feature-card" style="border-left: 3px solid var(--amber);">
+                    <h3 style="color: var(--amber);">Open Question: Who Owns Social?</h3>
+                    <p>Weekly threads, replies, DMs, quote-tweeting engineers &mdash; this needs an owner. Engineers provide raw material but shouldn't be the ones publishing. Who runs @vultisig day-to-day?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 19: USER ACQUISITION ENGINE
+         =========================================== -->
+    <section class="slide" aria-label="User Acquisition">
+        <div class="slide-content">
+            <div class="badge reveal">Go to Market</div>
+            <h2 class="reveal">Where 10K Users Come From</h2>
+            <p class="section-desc reveal">The rebrand seeds the base. Three engines sustain growth after the buzz fades.</p>
+
+            <div class="phase-row reveal">
+                <div class="phase-card phase-card--1">
+                    <span class="phase-num">~40% / Rebrand</span>
+                    <h3>Station User Base</h3>
+                    <p>Existing users migrate via in-app update. Hype screen + early supporter badge drives urgency. App store listing renamed in-place &mdash; preserves ratings and SEO.</p>
+                </div>
+                <div class="phase-card phase-card--2">
+                    <span class="phase-num">~35% / AI Ecosystem</span>
+                    <h3>Default Wallet for AI</h3>
+                    <p>Every AI agent that needs to transact on-chain becomes a distribution channel. MCP server means Claude, GPT, and custom agents all funnel users to Vultisig wallets.</p>
+                </div>
+                <div class="phase-card phase-card--3">
+                    <span class="phase-num">~25% / Demo-Driven</span>
+                    <h3>Product Sells Itself</h3>
+                    <p>"I asked my wallet to swap ETH" &mdash; screenshots go viral like early ChatGPT. Target crypto media, SEO on "AI crypto wallet", influencer early access.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===========================================
+       PRESENTATION CONTROLLER
+       =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.setupParticles();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = index;
+                            this.updateProgressBar();
+                            this.updateNavDots();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide + 1);
+                    } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide - 1);
+                    } else if (e.code === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.code === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        this.goToSlide(this.currentSlide + (diff > 0 ? 1 : -1));
+                    }
+                }, { passive: true });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    nav.appendChild(dot);
+                });
+                this.dots = nav.querySelectorAll('.nav-dot');
+            }
+
+            updateNavDots() {
+                this.dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentSlide);
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.slides.length) return;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+            }
+
+            setupParticles() {
+                const canvas = document.getElementById('particles');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const colors = ['#00ffcc', '#ff00aa', '#4466ff'];
+
+                function resize() {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+                resize();
+                window.addEventListener('resize', resize);
+
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 2 + 0.5,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        alpha: Math.random() * 0.5 + 0.1
+                    });
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.alpha;
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    });
+
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 120) {
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = particles[i].color;
+                                ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                                ctx.stroke();
+                                ctx.globalAlpha = 1;
+                            }
+                        }
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>

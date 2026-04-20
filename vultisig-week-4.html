@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vultiagent — Week 4 Update</title>
+
+    <!-- Fonts: Clash Display (display) + Satoshi (body) from Fontshare -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600;700&f[]=satoshi@400;500;700&display=swap" rel="stylesheet">
+    <!-- Fallback: JetBrains Mono for code/monospace accents -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (NEON CYBER THEME)
+           =========================================== */
+        :root {
+            /* Colors */
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #0f1629;
+            --bg-card: rgba(15, 22, 41, 0.8);
+            --text-primary: #e0e8ff;
+            --text-secondary: rgba(224, 232, 255, 0.65);
+            --text-muted: rgba(224, 232, 255, 0.35);
+            --cyan: #00ffcc;
+            --cyan-dim: rgba(0, 255, 204, 0.15);
+            --cyan-glow: rgba(0, 255, 204, 0.3);
+            --magenta: #ff00aa;
+            --magenta-dim: rgba(255, 0, 170, 0.15);
+            --magenta-glow: rgba(255, 0, 170, 0.3);
+            --blue: #4466ff;
+            --blue-dim: rgba(68, 102, 255, 0.15);
+            --amber: #ffaa00;
+            --amber-dim: rgba(255, 170, 0, 0.15);
+            --green: #39d353;
+            --green-dim: rgba(57, 211, 83, 0.15);
+            --red: #ff4466;
+            --red-dim: rgba(255, 68, 102, 0.15);
+
+            /* Typography — all clamp() */
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.5rem, 4vw, 3rem);
+            --h3-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            --body-size: clamp(0.8rem, 1.4vw, 1.125rem);
+            --small-size: clamp(0.8rem, 1.1vw, 1rem);
+            --mono-size: clamp(0.75rem, 1vw, 0.9rem);
+
+            /* Spacing */
+            --slide-padding: clamp(2rem, 5vw, 5rem);
+            --content-gap: clamp(1rem, 2.5vw, 2.5rem);
+            --element-gap: clamp(0.5rem, 1.2vw, 1.25rem);
+            --header-gap: clamp(0.5rem, 1vh, 1rem);
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        /* ===========================================
+           RESET
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===========================================
+           VIEWPORT BASE (MANDATORY)
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+            gap: var(--content-gap);
+        }
+        .card, .container, .content-box {
+            max-width: min(90vw, 1000px);
+            max-height: min(80vh, 700px);
+        }
+        .feature-list, .bullet-list {
+            gap: clamp(0.4rem, 1vh, 1rem);
+        }
+        .feature-list li, .bullet-list li {
+            font-size: var(--body-size);
+            line-height: 1.4;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+        img, .image-container {
+            max-width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: contain;
+        }
+
+        /* Short viewports */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(1rem, 3vw, 2.5rem);
+                --content-gap: clamp(0.5rem, 1.5vw, 1.25rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+                --body-size: clamp(0.75rem, 1.2vw, 1rem);
+                --small-size: clamp(0.7rem, 1vw, 0.9rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.4rem, 1vw, 1rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.1vw, 0.95rem);
+                --small-size: clamp(0.65rem, 0.9vw, 0.85rem);
+            }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+                --small-size: clamp(0.6rem, 0.85vw, 0.8rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ===========================================
+           GLOBAL STYLES
+           =========================================== */
+        body {
+            background: var(--bg-primary);
+            font-family: var(--font-body);
+            color: var(--text-primary);
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(0,255,204,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content { z-index: 1; }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: var(--header-gap);
+        }
+        h3 {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        p, li {
+            font-size: var(--body-size);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+
+        /* Phase badge */
+        .badge {
+            display: inline-block;
+            align-self: flex-start;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.35em 1.2em;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .badge--magenta { border-color: var(--magenta); color: var(--magenta); }
+        .badge--amber { border-color: var(--amber); color: var(--amber); }
+        .badge--blue { border-color: var(--blue); color: var(--blue); }
+        .badge--green { border-color: var(--green); color: var(--green); }
+
+        /* Feature cards */
+        .feature-grid {
+            display: grid;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        .feature-grid--3x2 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+        }
+        .feature-grid--2x2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .feature-grid--2x3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 700px) {
+            .feature-grid--3x2 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.8rem, 1.8vw, 1.5rem);
+            transition: border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: rgba(0, 255, 204, 0.25);
+        }
+        .feature-card h3 {
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.4rem);
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .feature-card .card-icon {
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.5rem);
+        }
+
+        /* Phase overview cards */
+        .phase-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+        }
+        @media (max-width: 600px) {
+            .phase-row { grid-template-columns: 1fr; }
+        }
+        .phase-card {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 16px);
+            padding: clamp(1.25rem, 2.5vw, 2rem);
+            border-left: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1vh, 0.75rem);
+        }
+        .phase-card--2 { border-left-color: var(--magenta); }
+        .phase-card--3 { border-left-color: var(--amber); }
+        .phase-card .phase-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        .phase-card--1 .phase-num { color: var(--cyan); }
+        .phase-card--2 .phase-num { color: var(--magenta); }
+        .phase-card--3 .phase-num { color: var(--amber); }
+        .phase-card h3 {
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+        }
+        .phase-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* Bullet list with glowing dots */
+        .glow-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.75rem, 1.5vh, 1.5rem);
+        }
+        .glow-list li {
+            padding-left: clamp(1rem, 2vw, 1.5rem);
+            position: relative;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .glow-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+        .glow-list--magenta li::before {
+            background: var(--magenta);
+            box-shadow: 0 0 8px var(--magenta-glow);
+        }
+        .glow-list--amber li::before {
+            background: var(--amber);
+            box-shadow: 0 0 8px rgba(255,170,0,0.3);
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            gap: clamp(2rem, 5vw, 5rem);
+        }
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: var(--cyan);
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-top: 0.3em;
+        }
+
+        /* Subtitle line */
+        .subtitle {
+            font-size: clamp(0.85rem, 1.5vw, 1.2rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Section description */
+        .section-desc {
+            max-width: min(65ch, 80vw);
+        }
+
+        /* ===========================================
+           TABLES
+           =========================================== */
+        .model-table {
+            width: 100%;
+            overflow: hidden;
+        }
+        .model-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--small-size);
+        }
+        .model-table th {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.15);
+        }
+        .model-table td {
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            font-size: var(--small-size);
+        }
+        .model-table td.mono {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .model-row--winner td {
+            color: var(--text-primary);
+        }
+        .model-row--veto td {
+            opacity: 0.5;
+        }
+        .verdict {
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.15em 0.5em;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .verdict--go { color: var(--cyan); background: var(--cyan-dim); }
+        .verdict--maybe { color: var(--amber); background: var(--amber-dim); }
+        .verdict--no { color: var(--magenta); background: var(--magenta-dim); }
+        .verdict--review { color: var(--blue); background: var(--blue-dim); }
+        .verdict--done { color: var(--green); background: var(--green-dim); }
+        .verdict--blocked { color: var(--red); background: var(--red-dim); }
+        .verdict--stalled { color: var(--text-muted); background: rgba(255,255,255,0.06); }
+
+        /* Highlighted row */
+        .model-row--highlight td {
+            background: rgba(0, 255, 204, 0.04);
+        }
+
+        /* Methodology cards */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1vw, 0.75rem);
+        }
+        @media (max-width: 700px) {
+            .method-grid { grid-template-columns: 1fr; }
+        }
+        .method-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+        }
+        .method-card h3 {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);
+            color: var(--text-primary);
+        }
+        .method-card p {
+            font-size: var(--small-size);
+            line-height: 1.35;
+        }
+        .method-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--cyan);
+            letter-spacing: 0.1em;
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.2rem);
+        }
+
+        /* ===========================================
+           MISSION STATUS BADGES
+           =========================================== */
+        .status-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.75vw, 0.7rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.2em 0.6em;
+            border-radius: 3px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .status-badge--done { color: var(--green); background: var(--green-dim); }
+        .status-badge--progress { color: var(--cyan); background: var(--cyan-dim); }
+        .status-badge--open { color: var(--amber); background: var(--amber-dim); }
+        .status-badge--blocked { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p1 { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p2 { color: var(--blue); background: var(--blue-dim); }
+
+        /* Mission cards */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .mission-grid { grid-template-columns: 1fr; }
+        }
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .mission-card__header {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+            flex-wrap: wrap;
+        }
+        .mission-card__title {
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .mission-card__desc {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .mission-card__progress {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+        }
+        .progress-bar-mini {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-mini__fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.6s var(--ease-out-expo);
+        }
+        .progress-bar-mini__fill--green { background: var(--green); }
+        .progress-bar-mini__fill--cyan { background: var(--cyan); }
+        .progress-bar-mini__fill--amber { background: var(--amber); }
+        .progress-bar-mini__fill--magenta { background: var(--magenta); }
+        .progress-pct {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* Delta chip — shows weekly progress delta next to percentage */
+        .delta {
+            font-family: var(--font-mono);
+            font-size: clamp(0.5rem, 0.7vw, 0.65rem);
+            margin-left: 0.3em;
+            letter-spacing: 0.05em;
+        }
+        .delta--up { color: var(--green); }
+        .delta--down { color: var(--red); }
+        .delta--flat { color: var(--text-muted); }
+
+        /* ===========================================
+           CHECKLIST
+           =========================================== */
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.7vh, 0.6rem);
+        }
+        .check-list li {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            padding-left: clamp(1.2rem, 2vw, 1.5rem);
+            position: relative;
+            line-height: 1.4;
+        }
+        .check-list li::before {
+            position: absolute;
+            left: 0;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .check-list li.done { color: var(--text-muted); }
+        .check-list li.done::before { content: '✓'; color: var(--green); }
+        .check-list li.todo::before { content: '○'; color: var(--text-muted); }
+        .check-list li.wip::before { content: '◐'; color: var(--cyan); }
+
+        /* ===========================================
+           CALLOUT BOX
+           =========================================== */
+        .callout {
+            background: var(--bg-card);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+        }
+        .callout--cyan { border-color: rgba(0, 255, 204, 0.2); }
+        .callout--green { border-color: rgba(57, 211, 83, 0.2); background: rgba(57, 211, 83, 0.04); }
+        .callout--magenta { border-color: rgba(255, 0, 170, 0.2); }
+        .callout--red { border-color: rgba(255, 68, 102, 0.25); background: rgba(255, 68, 102, 0.04); }
+
+        /* ===========================================
+           OPTION COMPARISON (A vs B)
+           =========================================== */
+        .option-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .option-split { grid-template-columns: 1fr; }
+        }
+        .option-box {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-top: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .option-box--b { border-top-color: var(--magenta); }
+        .option-box__label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .option-box h3 {
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+        }
+
+        /* ===========================================
+           DEGRADATION TIMELINE
+           =========================================== */
+        .degrade-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.6rem, 1.2vh, 1rem);
+        }
+        .degrade-item {
+            display: grid;
+            grid-template-columns: clamp(3rem, 6vw, 5rem) 1fr;
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+            align-items: start;
+            padding-bottom: clamp(0.5rem, 1vh, 0.75rem);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .degrade-item:last-child { border-bottom: none; }
+        .degrade-pct {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .degrade-body h3 {
+            font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.15rem);
+        }
+        .degrade-body p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* ===========================================
+           SCROLL ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+        .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+
+        /* ===========================================
+           TITLE SLIDE
+           =========================================== */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .title-slide .slide-content {
+            align-items: center;
+            gap: clamp(0.75rem, 2vh, 2rem);
+        }
+        .title-slide .badge { align-self: center; }
+
+        .title-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            pointer-events: none;
+            animation: orbDrift 10s ease-in-out infinite;
+        }
+        .title-orb--1 {
+            width: clamp(200px, 30vw, 400px);
+            height: clamp(200px, 30vw, 400px);
+            background: var(--cyan);
+            top: 15%;
+            right: 15%;
+        }
+        .title-orb--2 {
+            width: clamp(150px, 25vw, 350px);
+            height: clamp(150px, 25vw, 350px);
+            background: var(--magenta);
+            bottom: 20%;
+            left: 15%;
+            animation-delay: -4s;
+        }
+        @keyframes orbDrift {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(15px, -20px); }
+            66% { transform: translate(-10px, 15px); }
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-meta {
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: scanMove 4s linear infinite;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes scanMove {
+            from { top: -2px; }
+            to { top: 100%; }
+        }
+
+        /* ===========================================
+           VISION SLIDE
+           =========================================== */
+        .vision-slide .slide-content {
+            align-items: center;
+            text-align: center;
+            gap: clamp(1.25rem, 3vh, 3rem);
+        }
+        .vision-slide .badge { align-self: center; }
+        .vision-quote {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            font-weight: 600;
+            line-height: 1.3;
+            max-width: min(55ch, 85vw);
+            background: linear-gradient(135deg, var(--text-primary), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            z-index: 1000;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 2vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 0.8vh, 10px);
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .nav-dot.active {
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan-glow);
+            transform: scale(1.3);
+        }
+
+        /* ===========================================
+           PARTICLES
+           =========================================== */
+        #particles {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: MISSION BOARD
+         =========================================== -->
+    <section class="slide" aria-label="Mission Board">
+        <div class="slide-content">
+            <div style="display: flex; align-items: center; gap: var(--element-gap); flex-wrap: wrap;">
+                <div class="badge reveal">Week 4 &middot; April 21, 2026</div>
+                <span class="reveal" style="font-family: var(--font-mono); font-size: var(--mono-size); color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase;">Vultiagent &middot; Internal</span>
+            </div>
+            <h2 class="reveal">Mission Board</h2>
+            <p class="section-desc reveal">Four P1 missions shipped this week: CLI Agent-Friendliness, Agent Chat v2 (cross-repo AI SDK migration), MCP Consolidation (mcp-ts supersedes Go mcp), and Team Infra. Station Android in Play Store review. Tool Consolidation stack opened as drafts across all four repos. Two Vultiverse airdrop tracks remain top-priority release blockers.</p>
+
+            <div class="model-table reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mission</th>
+                            <th>Owner</th>
+                            <th>Pri</th>
+                            <th style="min-width: clamp(60px, 10vw, 120px);">Progress</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- #15 CLI Agent-Friendliness: 95% In Review → 100% DONE (vultisig-sdk#204 merged) -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">15</td>
+                            <td style="color: var(--text-primary);">CLI Agent-Friendliness</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+5</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #4 Station App Takeover: 93% → 95% (Android 5.0.0 submitted to Play Store, now in Google review; iOS still ITMS-90076 blocked on ASC Admin) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">4</td>
+                            <td style="color: var(--text-primary);">Station App Takeover</td>
+                            <td>Apotheosis</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 95%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">95%<span class="delta delta--up">+5</span></span></div></td>
+                            <td><span class="verdict verdict--review">Play Store review</span></td>
+                        </tr>
+                        <!-- #2 Agent Chat Architecture v2: 85% → 100% Shipped (vultiagent-app#155, agent-backend#119, vultisig-sdk#285 all merged Apr 16-17) -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">2</td>
+                            <td style="color: var(--text-primary);">Agent Chat Architecture v2</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+15</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #13 MCP Consolidation: 80% → 100% Shipped (mcp-ts live on fly.io, Go mcp deprecated — mcp#143 redundant) -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">13</td>
+                            <td style="color: var(--text-primary);">MCP Consolidation</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+20</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #7 Chain & Swap Coverage: 60% → 72% (Thor LP v2, Cetus Sui, Maya, CW20, burn rejection) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">7</td>
+                            <td style="color: var(--text-primary);">Chain &amp; Swap Coverage</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 72%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">72%<span class="delta delta--up">+12</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- #16 Agent Stability & UX Polish: 55% → 62% (Maestro v2 + PostHog native hooks refactor + TrueSheet migration + Android keyboard offset + 5 scheduling PRs merged Apr 20) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">16</td>
+                            <td style="color: var(--text-primary);">Agent Stability &amp; UX Polish</td>
+                            <td>NeOMakinG</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 62%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">62%<span class="delta delta--up">+27</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- #17 Tool Consolidation: 35% → 55% — all 4 draft PRs opened Apr 20 across SDK + mcp-ts + agent-backend + app -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.04);">
+                            <td class="mono">17</td>
+                            <td style="color: var(--text-primary);">Tool Consolidation (~136 → ~30 tools) <span style="color: var(--green); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">NEW</span></td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 55%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">55%<span class="delta delta--up">+20</span></span></div></td>
+                            <td><span class="verdict verdict--review">4 drafts open</span></td>
+                        </tr>
+                        <!-- #12 Chat-First Onboarding: 25% Open → 45% In Progress (auth independence landed app + backend) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">12</td>
+                            <td style="color: var(--text-primary);">Chat-First Onboarding</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 45%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">45%<span class="delta delta--up">+20</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- #1 Unify Chain Logic into SDK: 55% In Progress → 55% STALLED (no direct work this week) -->
+                        <tr>
+                            <td class="mono">1</td>
+                            <td style="color: var(--text-primary);">Unify Chain Logic into SDK</td>
+                            <td>NeOMakinG</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--amber" style="width: 55%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">55%<span class="delta delta--flat">±0</span></span></div></td>
+                            <td><span class="verdict verdict--stalled">Stalled</span></td>
+                        </tr>
+                        <!-- #11 Team Infra & Process: DONE (unchanged) -->
+                        <tr>
+                            <td class="mono">11</td>
+                            <td>Team Infra &amp; Process</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Done</span></td>
+                        </tr>
+                        <!-- #14 Billing & Token Gating: assigned to Apotheosis (post-Station ship) -->
+                        <tr>
+                            <td class="mono">14</td>
+                            <td>Billing &amp; Token Gating</td>
+                            <td>Apotheosis</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--amber" style="width: 15%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">15%<span class="delta delta--up">+5</span></span></div></td>
+                            <td><span class="verdict verdict--maybe">Assigned</span></td>
+                        </tr>
+                        <!-- #18 Vultiverse Airdrop backend: owner corrected to Apotheosis per project board; 10% → 20% (phased plan drafted Apr 20, Terra data sourcing options narrowed, Cosmostation API request in flight) -->
+                        <tr style="background: rgba(57, 211, 83, 0.04);">
+                            <td class="mono">18</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop &mdash; backend <span style="color: var(--green); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">NEW</span></td>
+                            <td>Apotheosis <span style="color: var(--text-muted); font-size: 0.85em;">(scoping)</span></td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--amber" style="width: 20%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">20%<span class="delta delta--up">+10</span></span></div></td>
+                            <td><span class="verdict verdict--go">Scoping</span></td>
+                        </tr>
+                        <!-- #19 Vultiverse Airdrop contract: NEW — still unassigned -->
+                        <tr>
+                            <td class="mono">19</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop &mdash; AirdropClaim contract <span style="color: var(--green); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">NEW</span></td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Unassigned</span></td>
+                        </tr>
+                        <!-- Unassigned P2s (unchanged) -->
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">5</td>
+                            <td>Chrome Extension</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">6</td>
+                            <td>SDK: Portfolio &amp; Info</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">8</td>
+                            <td>SDK: DeFi Operations</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">Four missions shipped. #14 assigned to Apotheosis for after Station ship. #18 actively scoped by Apotheosis (phased plan drafted, Terra data sourcing narrowed to indexing.co &rarr; Allnodes fallback). #19 AirdropClaim contract still unassigned.</p>
+        </div>
+    </section>
+
+
+
+    <!-- ===========================================
+         SLIDE 2: THIS WEEK
+         =========================================== -->
+    <section class="slide" aria-label="This Week">
+        <div class="title-orb title-orb--1" style="opacity: 0.2;"></div>
+        <div class="title-orb title-orb--2" style="opacity: 0.2;"></div>
+        <div class="scanline"></div>
+        <canvas id="particles"></canvas>
+
+        <div class="slide-content">
+            <div class="badge badge--green reveal">This Week</div>
+            <h2 class="reveal">What Shipped</h2>
+            <p class="section-desc reveal">CLI landed. Agent chat rewrite merged cross-repo. MCP-TS live in prod, Go mcp deprecated.</p>
+
+            <div class="stats-row reveal">
+                <div>
+                    <div class="stat-value" style="color: var(--cyan);">161</div>
+                    <div class="stat-label">PRs merged</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--amber);">38</div>
+                    <div class="stat-label">Open PRs</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--magenta);">884</div>
+                    <div class="stat-label">Commits</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--green);">+129k</div>
+                    <div class="stat-label">Lines added</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--blue);">4</div>
+                    <div class="stat-label">Prod releases</div>
+                </div>
+            </div>
+
+            <ul class="glow-list reveal">
+                <li><strong style="color: var(--green);">CLI agent-friendliness merged</strong> &mdash; vsig is now agent-grade (8.65/10 on an internal rubric, above <code style="font-family: var(--font-mono); color: var(--cyan);">gh</code> CLI). Ships a new <code style="font-family: var(--font-mono); color: var(--cyan);">@vultisig/mcp</code> package wrapping the SDK for Claude/GPT tool-calling, with strict confirmation gating on every financial operation.</li>
+                <li><strong style="color: var(--cyan);">MCP-TS live in production</strong> &mdash; first green fly.io deploy, auto-deploy pipeline on main, and Nansen / Etherscan / Morpho / deBridge upstreams baked into the image. Parity pass with the Go MCP landed (Maya denoms, CW20 transfer, tornado envelope).</li>
+                <li><strong style="color: var(--magenta);">Agent chat rewrite merged across the stack</strong> &mdash; agent-backend#119 (server-side UI Message Stream v1) and vultiagent-app#155 (client-side AI SDK v5) landed together Apr 16. vultisig-sdk#285 followed Apr 17, porting the protocol to CLI, iOS, and Windows so every client speaks the new stream format.</li>
+                <li><strong style="color: var(--amber);">Station Android 5.0.0 in Play Store review</strong> &mdash; build pipeline unblocked (EAS secrets, GitHub-token-to-Gradle, auto-increment build numbers), P0 funds-lock fix landed, Google Play compliance cleared, recover-seed nav bug fixed, swipe-up hint added to Vultiverse intro. TestFlight iOS 5.0.0 still blocked on ITMS-90076 pending ASC Admin action on the Apple side.</li>
+                <li><strong style="color: var(--blue);">Chain coverage surge</strong> &mdash; THOR LP v2 (auto-pair, lockup, halts, mimir gate), Cetus Sui swap end-to-end, Maya token denoms, CW20 transfer, burn-address send rejection with calldata recipient checks. Plus always-fresh EVM nonce via <code style="font-family: var(--font-mono); color: var(--cyan);">pending</code> block tag (kills stale-nonce drops on rapid send/swap).</li>
+                <li><strong style="color: var(--cyan);">Agent-backend v1.4.0 + v1.5.0 released</strong> &mdash; launch-surface PostHog feature-flag gating (tool filter, prompt sections, chain enforcement), auth independence (JWT issuance moves from verifier to agent-backend with refresh rotation + redis active-set), and prompt-rule hardening for stall recovery.</li>
+                <li><strong style="color: var(--green);">Agent stability polish wave</strong> &mdash; Maestro E2E v2 at 70/70 across 14 content-verified flows, instant-send 3s stall killed, swipe-to-delete conversations, stream scroll fix, error-bubble on transport failure, credits UI behind PostHog flag. Apr 20 follow-up: TrueSheet migration across all 6 sheets, Android keyboard offset, PostHog-native hooks refactor, 5 scheduling + settings polish PRs.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: NEXT WEEK
+         =========================================== -->
+    <section class="slide" aria-label="Next Week">
+        <div class="slide-content">
+            <div class="badge reveal">Next Week</div>
+            <h2 class="reveal">Focus &amp; Decisions</h2>
+            <p class="section-desc reveal">Three things to ship. Two things to decide.</p>
+
+            <ul class="glow-list reveal">
+                <li><strong style="color: var(--amber);">Assign Mission #19 (AirdropClaim contract)</strong> &mdash; still unassigned. Needs a name on it this week so it can move from spec to implementation.</li>
+                <li><strong style="color: var(--green);">Promote Station Android to production</strong> &mdash; 5.0.0 is in Google Play review (submitted Apr 20). Once approved, promote from review to production. Parallel: unblock iOS TestFlight via ASC Admin keychain group declaration so #48 can come off draft.</li>
+                <li><strong style="color: var(--amber);">Close the Vultiverse snapshot decision</strong> &mdash; Apotheosis waiting on indexing.co quote; Allnodes $2.6k/mo confirmed fallback. Pick by end of week so #18 can move from scoping to build. ~10 product decisions still needed from Strategy/Founder (slot counts, VULT amounts, eligibility window).</li>
+                <li><strong style="color: var(--cyan);">Land tool consolidation stack</strong> &mdash; 4 drafts open across SDK#284, mcp-ts#30, agent-backend#128, vultiagent-app#164. Harden together, then merge in order (SDK first, app last) to collapse the agent tool surface from ~136 to ~30 always-on.</li>
+                <li><strong style="color: var(--amber);">Decide SDK Unification ownership</strong> &mdash; NeO's plate is full with Agent Stability polish. Reassign #1 or deprioritise explicitly.</li>
+                <li><strong style="color: var(--text-muted);">Close mcp#143 as redundant</strong> &mdash; the Go mcp is deprecated now that mcp-ts is live in prod. Mark Mission #13 as shipped on GitHub Project.</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <!-- ===========================================
+       PRESENTATION CONTROLLER
+       =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.setupParticles();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = index;
+                            this.updateProgressBar();
+                            this.updateNavDots();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide + 1);
+                    } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide - 1);
+                    } else if (e.code === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.code === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        this.goToSlide(this.currentSlide + (diff > 0 ? 1 : -1));
+                    }
+                }, { passive: true });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    nav.appendChild(dot);
+                });
+                this.dots = nav.querySelectorAll('.nav-dot');
+            }
+
+            updateNavDots() {
+                this.dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentSlide);
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.slides.length) return;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+            }
+
+            setupParticles() {
+                const canvas = document.getElementById('particles');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const colors = ['#00ffcc', '#ff00aa', '#4466ff'];
+
+                function resize() {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+                resize();
+                window.addEventListener('resize', resize);
+
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 2 + 0.5,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        alpha: Math.random() * 0.5 + 0.1
+                    });
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.alpha;
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    });
+
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 120) {
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = particles[i].color;
+                                ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                                ctx.stroke();
+                                ctx.globalAlpha = 1;
+                            }
+                        }
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>

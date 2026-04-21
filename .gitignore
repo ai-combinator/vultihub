@@ -9,6 +9,7 @@ vultiserver/
 vultiagent-app/
 agent-backend/
 mcp/
+mcp-ts/
 
 # Tooling
 .playwright-mcp/
@@ -16,5 +17,7 @@ mcp/
 # Claude local config (memory, settings)
 .claude/*
 !.claude/skills/
+.claude/skills/eng-update/
+.claude/skills/frontend-slides/
 
 # Tickets tracked in git

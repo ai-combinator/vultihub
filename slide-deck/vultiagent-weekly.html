@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vultiagent — Week 5 Update</title>
+
+    <!-- Fonts: Clash Display (display) + Satoshi (body) from Fontshare -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600;700&f[]=satoshi@400;500;700&display=swap" rel="stylesheet">
+    <!-- Fallback: JetBrains Mono for code/monospace accents -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (NEON CYBER THEME)
+           =========================================== */
+        :root {
+            /* Colors */
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #0f1629;
+            --bg-card: rgba(15, 22, 41, 0.8);
+            --text-primary: #e0e8ff;
+            --text-secondary: rgba(224, 232, 255, 0.65);
+            --text-muted: rgba(224, 232, 255, 0.35);
+            --cyan: #00ffcc;
+            --cyan-dim: rgba(0, 255, 204, 0.15);
+            --cyan-glow: rgba(0, 255, 204, 0.3);
+            --magenta: #ff00aa;
+            --magenta-dim: rgba(255, 0, 170, 0.15);
+            --magenta-glow: rgba(255, 0, 170, 0.3);
+            --blue: #4466ff;
+            --blue-dim: rgba(68, 102, 255, 0.15);
+            --amber: #ffaa00;
+            --amber-dim: rgba(255, 170, 0, 0.15);
+            --green: #39d353;
+            --green-dim: rgba(57, 211, 83, 0.15);
+            --red: #ff4466;
+            --red-dim: rgba(255, 68, 102, 0.15);
+
+            /* Typography — all clamp() */
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.5rem, 4vw, 3rem);
+            --h3-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            --body-size: clamp(0.8rem, 1.4vw, 1.125rem);
+            --small-size: clamp(0.8rem, 1.1vw, 1rem);
+            --mono-size: clamp(0.75rem, 1vw, 0.9rem);
+
+            /* Spacing */
+            --slide-padding: clamp(2rem, 5vw, 5rem);
+            --content-gap: clamp(1rem, 2.5vw, 2.5rem);
+            --element-gap: clamp(0.5rem, 1.2vw, 1.25rem);
+            --header-gap: clamp(0.5rem, 1vh, 1rem);
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        /* ===========================================
+           RESET
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===========================================
+           VIEWPORT BASE (MANDATORY)
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+            gap: var(--content-gap);
+        }
+        .card, .container, .content-box {
+            max-width: min(90vw, 1000px);
+            max-height: min(80vh, 700px);
+        }
+        .feature-list, .bullet-list {
+            gap: clamp(0.4rem, 1vh, 1rem);
+        }
+        .feature-list li, .bullet-list li {
+            font-size: var(--body-size);
+            line-height: 1.4;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+        img, .image-container {
+            max-width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: contain;
+        }
+
+        /* Short viewports */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(1rem, 3vw, 2.5rem);
+                --content-gap: clamp(0.5rem, 1.5vw, 1.25rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+                --body-size: clamp(0.75rem, 1.2vw, 1rem);
+                --small-size: clamp(0.7rem, 1vw, 0.9rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.4rem, 1vw, 1rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.1vw, 0.95rem);
+                --small-size: clamp(0.65rem, 0.9vw, 0.85rem);
+            }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+                --small-size: clamp(0.6rem, 0.85vw, 0.8rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ===========================================
+           GLOBAL STYLES
+           =========================================== */
+        body {
+            background: var(--bg-primary);
+            font-family: var(--font-body);
+            color: var(--text-primary);
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(0,255,204,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content { z-index: 1; }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: var(--header-gap);
+        }
+        h3 {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        p, li {
+            font-size: var(--body-size);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+
+        /* Phase badge */
+        .badge {
+            display: inline-block;
+            align-self: flex-start;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.35em 1.2em;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .badge--magenta { border-color: var(--magenta); color: var(--magenta); }
+        .badge--amber { border-color: var(--amber); color: var(--amber); }
+        .badge--blue { border-color: var(--blue); color: var(--blue); }
+        .badge--green { border-color: var(--green); color: var(--green); }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            gap: clamp(2rem, 5vw, 5rem);
+        }
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: var(--cyan);
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-top: 0.3em;
+        }
+
+        /* Subtitle line */
+        .subtitle {
+            font-size: clamp(0.85rem, 1.5vw, 1.2rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Section description */
+        .section-desc {
+            max-width: min(65ch, 80vw);
+        }
+
+        /* ===========================================
+           TABLES
+           =========================================== */
+        .model-table {
+            width: 100%;
+            overflow: hidden;
+        }
+        .model-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--small-size);
+        }
+        .model-table th {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.15);
+        }
+        .model-table td {
+            padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.4rem, 1vw, 0.75rem);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            font-size: var(--small-size);
+        }
+        .model-table td.mono {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .model-row--winner td {
+            color: var(--text-primary);
+        }
+        .model-row--veto td {
+            opacity: 0.5;
+        }
+        .verdict {
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.15em 0.5em;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .verdict--go { color: var(--cyan); background: var(--cyan-dim); }
+        .verdict--maybe { color: var(--amber); background: var(--amber-dim); }
+        .verdict--no { color: var(--magenta); background: var(--magenta-dim); }
+        .verdict--review { color: var(--blue); background: var(--blue-dim); }
+        .verdict--done { color: var(--green); background: var(--green-dim); }
+        .verdict--blocked { color: var(--red); background: var(--red-dim); }
+        .verdict--stalled { color: var(--text-muted); background: rgba(255,255,255,0.06); }
+
+        /* ===========================================
+           MISSION STATUS BADGES
+           =========================================== */
+        .status-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: clamp(0.55rem, 0.75vw, 0.7rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.2em 0.6em;
+            border-radius: 3px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .status-badge--done { color: var(--green); background: var(--green-dim); }
+        .status-badge--progress { color: var(--cyan); background: var(--cyan-dim); }
+        .status-badge--open { color: var(--amber); background: var(--amber-dim); }
+        .status-badge--blocked { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p1 { color: var(--magenta); background: var(--magenta-dim); }
+        .status-badge--p2 { color: var(--blue); background: var(--blue-dim); }
+
+        /* Progress bar mini */
+        .progress-bar-mini {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-mini__fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.6s var(--ease-out-expo);
+        }
+        .progress-bar-mini__fill--green { background: var(--green); }
+        .progress-bar-mini__fill--cyan { background: var(--cyan); }
+        .progress-bar-mini__fill--amber { background: var(--amber); }
+        .progress-bar-mini__fill--magenta { background: var(--magenta); }
+
+        /* Delta chip */
+        .delta {
+            font-family: var(--font-mono);
+            font-size: clamp(0.5rem, 0.7vw, 0.65rem);
+            margin-left: 0.3em;
+            letter-spacing: 0.05em;
+        }
+        .delta--up { color: var(--green); }
+        .delta--down { color: var(--red); }
+        .delta--flat { color: var(--text-muted); }
+
+        /* Glow list */
+        .glow-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.6rem, 1.2vh, 1.2rem);
+        }
+        .glow-list li {
+            padding-left: clamp(1rem, 2vw, 1.5rem);
+            position: relative;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .glow-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+
+        /* Title slide orbs / scanline */
+        .title-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            pointer-events: none;
+            animation: orbDrift 10s ease-in-out infinite;
+        }
+        .title-orb--1 {
+            width: clamp(200px, 30vw, 400px);
+            height: clamp(200px, 30vw, 400px);
+            background: var(--cyan);
+            top: 15%;
+            right: 15%;
+        }
+        .title-orb--2 {
+            width: clamp(150px, 25vw, 350px);
+            height: clamp(150px, 25vw, 350px);
+            background: var(--magenta);
+            bottom: 20%;
+            left: 15%;
+            animation-delay: -4s;
+        }
+        @keyframes orbDrift {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(15px, -20px); }
+            66% { transform: translate(-10px, 15px); }
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: scanMove 4s linear infinite;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes scanMove {
+            from { top: -2px; }
+            to { top: 100%; }
+        }
+
+        /* ===========================================
+           SCROLL ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+        .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            z-index: 1000;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 2vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 0.8vh, 10px);
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .nav-dot.active {
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan-glow);
+            transform: scale(1.3);
+        }
+
+        /* ===========================================
+           PARTICLES
+           =========================================== */
+        #particles {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: MISSION BOARD
+         =========================================== -->
+    <section class="slide" aria-label="Mission Board">
+        <div class="slide-content">
+            <div style="display: flex; align-items: center; gap: var(--element-gap); flex-wrap: wrap;">
+                <div class="badge reveal">Week 5 &middot; April 27, 2026</div>
+                <span class="reveal" style="font-family: var(--font-mono); font-size: var(--mono-size); color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase;">Vultiagent &middot; Internal</span>
+            </div>
+            <h2 class="reveal">Mission Board</h2>
+            <p class="section-desc reveal">Agent reliability rearchitecture and credits v2 shipped. Vultiverse Airdrop foundations live end-to-end. Station Android 5.0.0 approved by Google, awaiting promotion. The parked tool-consolidation jumbo retired in favour of small surgical PRs. AirdropClaim contract picked up by NeO. SDK Unification re-scoped to count this week's RN keysign + harness + normalizeChain consolidation work.</p>
+
+            <div class="model-table reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mission</th>
+                            <th>Owner</th>
+                            <th>Pri</th>
+                            <th style="min-width: clamp(60px, 10vw, 120px);">Progress</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Already shipped: held at 100% -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">15</td>
+                            <td style="color: var(--text-primary);">CLI Agent-Friendliness</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">2</td>
+                            <td style="color: var(--text-primary);">Agent Chat Architecture v2</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">13</td>
+                            <td style="color: var(--text-primary);">MCP Consolidation</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <tr>
+                            <td class="mono">11</td>
+                            <td>Team Infra &amp; Process</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Done</span></td>
+                        </tr>
+                        <!-- Station: 95% -> 98% (Google approved 5.0.0 Apr 22, awaiting promotion; iOS still ASC-blocked) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">4</td>
+                            <td style="color: var(--text-primary);">Station App Takeover</td>
+                            <td>Apotheosis</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 98%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">98%<span class="delta delta--up">+3</span></span></div></td>
+                            <td><span class="verdict verdict--review">Play Store approved</span></td>
+                        </tr>
+                        <!-- Agent Stability: 62% -> 80% (reliability rearch landed, pr-receipts infra, QA harness, polyfill cleanup) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">16</td>
+                            <td style="color: var(--text-primary);">Agent Stability &amp; UX Polish</td>
+                            <td>NeOMakinG</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+18</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Chain & Swap: 72% -> 80% (tokens-mvp, rujira CCL, chainId guard, gas floors) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">7</td>
+                            <td style="color: var(--text-primary);">Chain &amp; Swap Coverage</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+8</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Vultiverse Airdrop backend: 20% -> 45% (foundations + tracking merged, end-to-end live) -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.04);">
+                            <td class="mono">18</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop, backend pipeline</td>
+                            <td>Apotheosis</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 45%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">45%<span class="delta delta--up">+25</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Chat-First Onboarding: 45% -> 55% (credits v2, receive crypto, credit dashboard) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">12</td>
+                            <td style="color: var(--text-primary);">Chat-First Onboarding</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 55%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">55%<span class="delta delta--up">+10</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Billing & Token Gating: 15% -> 25% (credits v2 shipped via gomes) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">14</td>
+                            <td style="color: var(--text-primary);">Billing &amp; Token Gating</td>
+                            <td>Apotheosis <span style="color: var(--text-muted); font-size: 0.85em;">(credits v2 by gomes)</span></td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 25%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">25%<span class="delta delta--up">+10</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- AirdropClaim contract: NEW assignee (NeO bootstrapped Foundry, refactored to winners-allowance) -->
+                        <tr class="model-row--winner" style="background: rgba(0, 255, 204, 0.04);">
+                            <td class="mono">19</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop, AirdropClaim contract <span style="color: var(--cyan); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">ASSIGNED</span></td>
+                            <td>NeOMakinG</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 25%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">25%<span class="delta delta--up">+25</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Tool Consolidation: 55% -> 60% (jumbo retired, surgical stack opened) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">17</td>
+                            <td style="color: var(--text-primary);">Tool Consolidation (~136 to ~30 tools)</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 60%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">60%<span class="delta delta--up">+5</span></span></div></td>
+                            <td><span class="verdict verdict--review">6 surgical PRs open</span></td>
+                        </tr>
+                        <!-- SDK Unification: 55% -> 80% (RN keysign fix unblocks all migration candidates, test harness + Android wiring, normalizeChain replaces hand-rolled chain normalizer in app) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">1</td>
+                            <td style="color: var(--text-primary);">Unify Chain Logic into SDK</td>
+                            <td>NeOMakinG</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+25</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Unassigned P2s -->
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">5</td>
+                            <td>Chrome Extension</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">6</td>
+                            <td>SDK: Portfolio &amp; Info</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                        <tr style="opacity: 0.6;">
+                            <td class="mono">8</td>
+                            <td>SDK: DeFi Operations</td>
+                            <td style="color: var(--text-muted);">&mdash;</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">&mdash;</span></div></td>
+                            <td><span class="verdict verdict--maybe">Open</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">Four missions still hold at 100%. Station Android one promotion away from full completion. NeO picks up #19 (AirdropClaim contract) on top of SDK Unification, stability, and Station migration tracks.</p>
+        </div>
+    </section>
+
+
+
+    <!-- ===========================================
+         SLIDE 2: WHAT SHIPPED
+         =========================================== -->
+    <section class="slide" aria-label="What Shipped">
+        <div class="title-orb title-orb--1" style="opacity: 0.2;"></div>
+        <div class="title-orb title-orb--2" style="opacity: 0.2;"></div>
+        <div class="scanline"></div>
+        <canvas id="particles"></canvas>
+
+        <div class="slide-content">
+            <div class="badge badge--green reveal">This Week</div>
+            <h2 class="reveal">What Shipped</h2>
+            <p class="section-desc reveal">Agent reliability rearchitecture, credits v2, Vultiverse airdrop foundations, RN keysign fix, and Station Android approval all landed. Tool consolidation pivoted from a parked jumbo to a surgical PR stack.</p>
+
+            <div class="stats-row reveal">
+                <div>
+                    <div class="stat-value" style="color: var(--cyan);">188</div>
+                    <div class="stat-label">PRs merged</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--amber);">90</div>
+                    <div class="stat-label">Open PRs</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--magenta);">840+</div>
+                    <div class="stat-label">Commits</div>
+                </div>
+                <div>
+                    <div class="stat-value" style="color: var(--green);">2</div>
+                    <div class="stat-label">SDK releases</div>
+                </div>
+            </div>
+
+            <ul class="glow-list reveal">
+                <li><strong style="color: var(--magenta);">Gomes, agent reliability rearchitecture merged</strong> after 6 review rounds with NeO and 260+ commits across the R1-R10 loop. agent-backend#146 ships 21 validators, retry orchestrator, loop breaker, vault-key redaction, and a fund-safety catch (LLM-smuggled <code style="font-family: var(--font-mono); color: var(--cyan);">auto_execute</code> scrubbed before sign). Plus credits v2 (#162), receive crypto end-to-end (#233 + mcp-ts#42), and a pr-receipts CI gate (vultiagent-app#227, #251-#254).</li>
+                <li><strong style="color: var(--green);">Apotheosis, Vultiverse Airdrop foundations live end-to-end.</strong> agent-backend#150 + #159 and mcp-ts#45 merged. Live run with real OpenRouter, AWS signer, Ethereum, Thorchain, and LI.FI captured 6 proposed transactions in the new tracking block correctly. Spec set consolidated into vultihub#21; station-mobile#70 leaves a redirect stub for old paths.</li>
+                <li><strong style="color: var(--amber);">Apotheosis, Station Android 5.0.0 approved by Google</strong> on Apr 22. Awaiting marketing-aligned promotion. iOS 5.0.0 still blocked on ASC Admin keychain group declaration since Apr 17.</li>
+                <li><strong style="color: var(--cyan);">NeO, RN keysign fix lands</strong> in vultisig-sdk#306, bundle 3.9MB to 791KB, all 31 ECDSA + 6 EdDSA chains signing. SDK test harness expanded with 9 new categories and Android Gradle wiring (sdk-test-harness#3). AirdropClaim contract bootstrapped in vultiagent-airdrop with the merkle-proof flow refactored to a winners-allowance model.</li>
+                <li><strong style="color: var(--blue);">NeO, Station replacement and app polish track.</strong> Backup import (vultiagent-app#237 merged), vault migration (#236 draft), EAS/Expo release parity (#235). Polish wave: TrueSheet platform split (#196), polyfill hygiene (#243), onboarding state-reset (#241), AddVaultSheet (#245), lazy conversation creation (#246), shared sheet padding (#248).</li>
+                <li><strong style="color: var(--magenta);">Jibles, parked tool-consolidation jumbo retired, surgical replacement opens.</strong> The original four-PR stack (mcp-ts#30, agent-backend#128, app#164) closed; replaced with small surgical PRs across mcp-ts (#46-49: DeFi 9 to 5, Polymarket 7 to 3, Uniswap V3 reads, <code style="font-family: var(--font-mono); color: var(--cyan);">execute_*</code> family) and agent-backend (#167: CRUD action-discriminator for vault_coin, vault_chain, address_book). Targets Gemini's schema limits.</li>
+                <li><strong style="color: var(--cyan);">Jibles, ActionCard + two-phase approval in review</strong> (vultiagent-app#229), compound card walks consent to biometric to signed to terminal outcome (APPROVED, REJECTED) in one frame, status latches across chat reopens, ERC-20 calldata decoding so token transfers show the real recipient. Schedule-tool fix sweep merged today (agent-backend#168, vultisig-sdk#307).</li>
+                <li><strong style="color: var(--green);">Gomes, chain &amp; swap coverage tightens.</strong> Tokens-mvp (vultiagent-app#216 + agent-backend#144 + mcp-ts#39) blocks silent token-to-native downgrade for spl, sui-token, jetton, trc20. Rujira CCL signing (#213/#300/#143). chainId mismatch guard before MPC sign (#228). Sei + Hyperliquid gas floors. Hyperliquid mainnet chainId 999.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: NEXT WEEK
+         =========================================== -->
+    <section class="slide" aria-label="Next Week">
+        <div class="slide-content">
+            <div class="badge reveal">Next Week</div>
+            <h2 class="reveal">Focus &amp; Decisions</h2>
+            <p class="section-desc reveal">Five focus areas, three decisions outstanding.</p>
+
+            <ul class="glow-list reveal">
+                <li><strong style="color: var(--cyan);">Land the surgical tool-consolidation stack.</strong> mcp-ts #46-49 (DeFi/Polymarket reads + <code style="font-family: var(--font-mono); color: var(--cyan);">execute_*</code> family), agent-backend #167 (CRUD action-discriminator), vultiagent-app #229 + #242 (renderers). Merge in repo order (mcp-ts, then agent-backend, then app). Retire legacy tool pairs once telemetry shows zero traffic.</li>
+                <li><strong style="color: var(--green);">Promote Station Android 5.0.0 to production</strong> once marketing aligns timing with the airdrop campaign. Unblock iOS TestFlight via ASC Admin keychain group declaration, currently blocked since Apr 17.</li>
+                <li><strong style="color: var(--magenta);">Continue Vultiverse Airdrop build.</strong> Stage 1 quest tracking against the verified foundations. AirdropClaim contract continues with NeO. Around 10 product decisions still needed from Strategy/Founder (slot counts, VULT amounts, eligibility window).</li>
+                <li><strong style="color: var(--amber);">Stage agent reliability v2 rollout.</strong> Flip <code style="font-family: var(--font-mono); color: var(--cyan);">RELIABILITY_V2_ENABLED</code> on a dev percentage first, then prod percentage, watching fail-rate telemetry between each step.</li>
+                <li><strong style="color: var(--text-muted);">Watch NeO's plate.</strong> SDK Unification, Agent Stability, AirdropClaim contract, and Station replacement migration all sit on one engineer. Reassess scope or pull in help if any track starts slipping.</li>
+                <li><strong style="color: var(--red);">Blockers</strong>, iOS TestFlight 5.0.0 (Apple-side keychain since Apr 17), pending product decisions on the airdrop campaign (slot counts, VULT amounts, eligibility window), and review bandwidth across 6 concurrent tool-consolidation surgical PRs spanning 3 repos.</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <!-- ===========================================
+       PRESENTATION CONTROLLER
+       =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.setupParticles();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = index;
+                            this.updateProgressBar();
+                            this.updateNavDots();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide + 1);
+                    } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide - 1);
+                    } else if (e.code === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.code === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        this.goToSlide(this.currentSlide + (diff > 0 ? 1 : -1));
+                    }
+                }, { passive: true });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    nav.appendChild(dot);
+                });
+                this.dots = nav.querySelectorAll('.nav-dot');
+            }
+
+            updateNavDots() {
+                this.dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentSlide);
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.slides.length) return;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+            }
+
+            setupParticles() {
+                const canvas = document.getElementById('particles');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const colors = ['#00ffcc', '#ff00aa', '#4466ff'];
+
+                function resize() {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+                resize();
+                window.addEventListener('resize', resize);
+
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 2 + 0.5,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        alpha: Math.random() * 0.5 + 0.1
+                    });
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.alpha;
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    });
+
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 120) {
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = particles[i].color;
+                                ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                                ctx.stroke();
+                                ctx.globalAlpha = 1;
+                            }
+                        }
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>

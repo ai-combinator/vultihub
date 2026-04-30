@@ -79,15 +79,16 @@ Six new tables, one shared types prefix (`airdrop_*` for Postgres enums). All na
 
 | Table | Owning stage | Purpose | Key columns |
 |---|---|---|---|
-| `agent_airdrop_registrations` | 1 | One row per user who joined the raffle | `public_key` (PK), `source`, `recipient_address`, `registered_at` |
+| `agent_airdrop_registrations` | 1 | One row per user who joined the raffle | `public_key` (PK), `source`, `bucket`, `recipient_address`, `registered_at` |
 | `agent_raffle_winners` | 2 | One row per winner; populated by `load-winners` CLI. Mirrors the contract's on-chain `allowance` mapping for status display. | `public_key` (PK), `recipient`, `amount`, `loaded_at` |
 | `agent_quest_events` | 3 | Append-only audit log of incoming quest events (counted + rejected) | `tool_call_id` (PK), `public_key`, `quest_id`, `tx_hash`, `counted` (bool), `reject_reason`, `tx_proposal_id`, `created_at` |
 | `agent_user_quests` | 3 | Materialized "which quests has each user completed" | `(public_key, quest_id)` (PK), `completed_at` |
 | `agent_claim_submissions` | 4 | One row per claim attempt; lifecycle from submitted → confirmed/failed. Rebroadcasts update `tx_hash` in place. | `nonce` (UNIQUE), `public_key`, `recipient`, `amount`, `tx_hash`, `status`, gas fields, timestamps |
 | `agent_relayer_state` | 4 | Singleton holding the relayer's `next_nonce` counter | `id=1` (CHECK), `next_nonce`, `last_synced` |
 
-Plus three Postgres enum types:
-- `airdrop_registration_source` — `seed`, `vault_share`
+Plus four Postgres enum types:
+- `airdrop_registration_source` — `seed`, `vault_share`, `create`
+- `airdrop_bucket` — `station_migration`, `campaign_new`
 - `airdrop_quest_id` — `swap`, `bridge`, `defi_action`, `alert`, `dca`
 - `airdrop_claim_status` — `submitted`, `confirmed`, `failed`
 
@@ -188,7 +189,7 @@ Three artifacts cross repo boundaries. All need to be locked early to avoid late
 
 ### Backend → Operator
 
-The `winners.csv` artifact from Stage 2's `draw` subcommand, handed to the multisig signer for batched `setWinners(...)` calls. Standard CSV with header row: `public_key, recipient, amount, registered_at, source`. The multisig signer (or their tooling) splits this into ~100-row batches and constructs one `setWinners(addresses[], amounts[])` tx per batch.
+The `winners.csv` artifact from Stage 2's `draw` subcommand, handed to the multisig signer for batched `setWinners(...)` calls. Standard CSV with header row: `public_key, recipient, amount, registered_at, source, bucket`. The multisig signer (or their tooling) splits this into ~100-row batches and constructs one `setWinners(addresses[], amounts[])` tx per batch.
 
 ---
 

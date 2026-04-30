@@ -31,11 +31,23 @@ What still needs to be built is the wiring between those screens and the airdrop
 2. RiveIntro plays, user swipes up.
 3. AuthMenu offers: Import Seed Phrase / Import Vault Share / Create New Vault.
 4. User picks a path. Existing migration / vault-creation UI runs through to a working Fast Vault.
-5. **App computes the user's EVM address** from the new Fast Vault locally — see [EVM address derivation](#evm-address-derivation) below.
-6. App acquires a JWT via the existing `POST /auth/token` flow (vault sig → 24h JWT).
-7. App calls `POST /airdrop/register` with `{ source: "seed" | "vault_share", recipient_address }`.
-8. App stores the response (`registered_at`, `recipient_address`, `source`).
-9. App transitions to the waiting screen.
+5. **App determines the airdrop bucket**: `station_migration` if this wallet existed in the legacy Station keychain, otherwise `campaign_new` for a wallet added during the campaign window.
+6. **App computes the user's EVM address** from the new Fast Vault locally — see [EVM address derivation](#evm-address-derivation) below.
+7. App acquires a JWT via the existing `POST /auth/token` flow (vault sig → 24h JWT).
+8. App calls `POST /airdrop/register` with `{ source: "seed" | "vault_share" | "create", bucket: "station_migration" | "campaign_new", recipient_address }`.
+9. App stores the response (`registered_at`, `recipient_address`, `source`, `bucket`).
+10. App transitions to the waiting screen.
+
+### Bucket classification
+
+The app owns classification because it is the only layer that can see whether a wallet came from Station's old keychain.
+
+| Bucket | When to send it |
+|---|---|
+| `station_migration` | The wallet was present in the legacy Station auth/keychain data before being migrated to a Fast Vault. |
+| `campaign_new` | The user added the wallet during the campaign window: Create New Vault, Recover Seed, Import Seed Phrase, or Import Vault Share. |
+
+`source` remains the import/create path (`seed`, `vault_share`, `create`). `bucket` is the allocation segment. They must be stored separately.
 
 ### Flow 2 — Pending (Days 8–28+)
 

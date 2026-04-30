@@ -31,12 +31,15 @@ Authorization: Bearer <jwt>
 Content-Type: application/json
 
 {
-  "source": "seed" | "vault_share",
+  "source": "seed" | "vault_share" | "create",
+  "bucket": "station_migration" | "campaign_new",
   "recipient_address": "0x..."
 }
 ```
 
-`source` is the import flow the user came through: `seed` for "import a seed phrase into a Fast Vault," `vault_share` for "import an existing Vultisig vault share."
+`source` is the import flow the user came through: `seed` for "import a seed phrase into a Fast Vault," `vault_share` for "import an existing Vultisig vault share," and `create` for "create a new Fast Vault."
+
+`bucket` is the allocation segment: `station_migration` for a wallet that existed in Station's legacy keychain and was migrated, `campaign_new` for a wallet added during the campaign window (create, recover seed, or import vault share). The app detects this locally and the backend stores it; the backend does not infer it.
 
 `recipient_address` is the EVM address VULT will be paid to if this entry wins. **Required.** The client computes it locally from the vault — for standard Vultisig vaults that means deriving the EVM address from the vault's ECDSA public key; for legacy Terra-only vaults (which can't derive one) the client prompts the user for an address. **The backend never derives, never inspects vault internals, never tries to detect Terra-only — it just stores what the client sends.** This keeps backend logic simple and puts the derivation in the place that already has the vault material.
 
@@ -45,6 +48,7 @@ Content-Type: application/json
 {
   "registered_at": "2026-04-25T12:34:56Z",
   "source": "seed",
+  "bucket": "station_migration",
   "recipient_address": "0x..."
 }
 ```
@@ -57,16 +61,17 @@ The client can tell whether this was a fresh registration or a retry by inspecti
 |---|---|---|
 | 401 | (handled by middleware) | Missing or invalid JWT |
 | 400 | `{"error":"INVALID_SOURCE"}` | `source` missing, or value not in enum |
+| 400 | `{"error":"INVALID_BUCKET"}` | `bucket` missing, or value not in enum |
 | 400 | `{"error":"INVALID_RECIPIENT_ADDRESS"}` | `recipient_address` missing, or doesn't match `^0x[a-fA-F0-9]{40}$` |
 | 403 | `{"error":"WINDOW_NOT_OPEN"}` | `now() < TRANSITION_WINDOW_START` |
 | 403 | `{"error":"WINDOW_CLOSED"}` | `now() >= TRANSITION_WINDOW_END` |
 
 **Behavior:**
 
-1. Validate body shape; reject with `400 INVALID_SOURCE` if `source` is missing or not in the enum.
+1. Validate body shape; reject with `400 INVALID_SOURCE` if `source` is missing or not in the enum, or `400 INVALID_BUCKET` if `bucket` is missing or not in the enum.
 2. Validate `recipient_address` against `^0x[a-fA-F0-9]{40}$` (no EIP-55 checksum required); reject with `400 INVALID_RECIPIENT_ADDRESS` if missing or malformed.
 3. Check window: if `now()` is outside `[TRANSITION_WINDOW_START, TRANSITION_WINDOW_END)`, reject with the appropriate 403.
-4. `INSERT ... ON CONFLICT (public_key) DO NOTHING RETURNING ...`, then `SELECT` to return the actual row. Existing row wins — both `source` and `recipient_address` are **immutable** after first registration. Re-registering with different values is a no-op (returns the original row); the analytics signal stays clean.
+4. `INSERT ... ON CONFLICT (public_key) DO NOTHING RETURNING ...`, then `SELECT` to return the actual row. Existing row wins — `source`, `bucket`, and `recipient_address` are **immutable** after first registration. Re-registering with different values is a no-op (returns the original row); the analytics signal stays clean.
 5. Return the row at 200.
 
 ### `GET /airdrop/status`
@@ -85,6 +90,7 @@ Authorization: Bearer <jwt>
   "registered": true,
   "registered_at": "2026-04-25T12:34:56Z",
   "source": "seed",
+  "bucket": "station_migration",
   "recipient_address": "0x...",
   "raffle_state": "pending" | "awaiting_draw" | "won" | "lost",
   "quests": {
@@ -137,14 +143,15 @@ The "raffle has been drawn" signal is just `EXISTS(SELECT 1 FROM agent_raffle_wi
 ```json
 {
   "total_registrations": 1234,
-  "by_source": { "seed": 800, "vault_share": 434 },
+  "by_source": { "seed": 700, "vault_share": 234, "create": 300 },
+  "by_bucket": { "station_migration": 500, "campaign_new": 734 },
   "window_state": "upcoming" | "open" | "closed",
   "window_opens_at": "2026-04-25T00:00:00Z",
   "window_closes_at": "2026-04-30T00:00:00Z"
 }
 ```
 
-**Behavior:** single Postgres query (`SELECT source, COUNT(*) FROM agent_airdrop_registrations GROUP BY source`), marshal, return. Table is small (single-digit thousands at most); query is sub-millisecond. No caching — the cache layer was more code than the query it would protect.
+**Behavior:** grouped Postgres query over `source, bucket`, marshal per-source and per-bucket totals, return. Table is small (single-digit thousands at most); query is sub-millisecond.
 
 **Errors:** none expected.
 
@@ -155,11 +162,13 @@ The "raffle has been drawn" signal is just `EXISTS(SELECT 1 FROM agent_raffle_wi
 ```sql
 -- Migration: XXXXXXXXXXXXXX_create_airdrop_registrations.sql
 
-CREATE TYPE airdrop_registration_source AS ENUM ('seed', 'vault_share');
+CREATE TYPE airdrop_registration_source AS ENUM ('seed', 'vault_share', 'create');
+CREATE TYPE airdrop_bucket AS ENUM ('station_migration', 'campaign_new');
 
 CREATE TABLE agent_airdrop_registrations (
     public_key        TEXT                        PRIMARY KEY,
     source            airdrop_registration_source NOT NULL,
+    bucket            airdrop_bucket              NOT NULL,
     recipient_address TEXT                        NOT NULL,    -- 0x-prefixed EVM address; client computes; backend never derives
     registered_at     TIMESTAMPTZ                 NOT NULL DEFAULT NOW()
 );
@@ -190,22 +199,23 @@ Prometheus metrics (following existing `agent-backend` conventions in `internal/
 
 | Metric | Type | Labels |
 |---|---|---|
-| `airdrop_register_total` | Counter | `result` ∈ `{created, existing, window_not_open, window_closed, invalid_source}` |
+| `airdrop_register_total` | Counter | `result` ∈ `{created, existing, window_not_open, window_closed, invalid_source, invalid_bucket}` |
 | `airdrop_status_total` | Counter | `state` ∈ `{not_registered, pending, awaiting_draw, won, lost}` |
 
 Per-endpoint latency + error metrics come from the existing HTTP middleware automatically.
 
-Structured logs include: `public_key` (first 8 chars only — privacy), `source`, `request_id`, `result`. The existing logrus context wiring handles this if we add the fields per request.
+Structured logs include: `public_key` (first 8 chars only — privacy), `source`, `bucket`, `request_id`, `result`. The existing logrus context wiring handles this if we add the fields per request.
 
 ---
 
 ## Tests
 
 **Unit (in `internal/service/airdrop/registration_test.go`):**
-- Source enum validation: missing, empty, wrong value, valid `seed`, valid `vault_share`.
+- Source enum validation: missing, empty, wrong value, valid `seed`, valid `vault_share`, valid `create`.
+- Bucket enum validation: missing, empty, wrong value, valid `station_migration`, valid `campaign_new`.
 - Recipient validation: missing (rejected), valid lowercase, valid mixed-case, missing 0x prefix, wrong length, non-hex chars.
 - Window enforcement: before-start, at-start, mid-window, at-end, after-end. Use an injected clock.
-- Idempotency: register twice returns same row; second source / recipient_address values are ignored.
+- Idempotency: register twice returns same row; second source / bucket / recipient_address values are ignored.
 - Raffle state computation: each of the four states with mocked `raffle_winners` and clock.
 
 **Integration (against real Postgres):**
@@ -233,7 +243,7 @@ internal/service/airdrop/
 
 internal/storage/postgres/
 ├── migrations/XXXXXXXXXXXXXX_create_airdrop_registrations.sql
-└── sqlc/airdrop_registrations.sql     Insert (idempotent), select-by-pk, count-all, count-by-source
+└── sqlc/airdrop_registrations.sql     Insert (idempotent), select-by-pk, count-by-source-and-bucket
 
 internal/api/server.go   (edit) — register the three new routes under existing JWT middleware (and bare for /stats)
 internal/config/config.go (edit) — add TRANSITION_WINDOW_START / _END env vars

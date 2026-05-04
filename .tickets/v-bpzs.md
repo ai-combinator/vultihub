@@ -1,6 +1,6 @@
 ---
 id: v-bpzs
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-16T23:57:46Z
@@ -64,3 +64,9 @@ A secondary contributor to check: what `execute_send` returns as its text conten
 ## Priority Rationale
 
 P2 (normal): cosmetic / UX clutter; doesn't break functionality. Worth fixing for mobile chat readability, but not blocking.
+
+## Notes
+
+**2026-04-22T01:12:22Z**
+
+Closing: verified the 'SEND TEMPLATE' / 'Transaction Confirmations (UI parser — load-bearing format)' block was removed from agent-backend/internal/service/agent/prompt.go. Prompt now uses a generic 'UI Cards' guidance section instead, so the model no longer gets forced into bullet restatement after execute_send.

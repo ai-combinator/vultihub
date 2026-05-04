@@ -1,6 +1,6 @@
 ---
 id: v-gmvc
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-15T21:54:24Z
@@ -25,3 +25,9 @@ Swap flows emit multiple build_* tool calls per user turn (quote → final tx, a
 - A swap quote + sign produces one visual card with internal progress.
 - lastBuildToolIndex / collapsing logic removed.
 - Existing swap e2e / maestro tests pass.
+
+## Notes
+
+**2026-04-22T01:12:24Z**
+
+Closing: findLastBuildToolIndex, lastBuildToolIndex, and the collapse branch are all gone from AssistantMessageView.tsx. Swap flow already reshaped away from multi-build collapsing.

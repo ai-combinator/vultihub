@@ -1,6 +1,6 @@
 ---
 id: v-vtmi
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-16T23:57:20Z
@@ -70,3 +70,9 @@ Note the recent vault-free prep refactor (ticket v-pyit, closed) added `prepareS
 ## Priority Rationale
 
 P1 (high): blocks the core send flow for EVM chains via the agent, which is the headline user-facing capability.
+
+## Notes
+
+**2026-04-23T23:44:10Z**
+
+v-hipx draft PR opened with probe + error-propagation fix: https://github.com/vultisig/vultiagent-app/pull/240 — getVaultEthAddress now propagates underlying cause; probe logs CoinType derivationPath + chainId at init. Next repro should surface the real failure in device logs.

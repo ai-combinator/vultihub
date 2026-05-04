@@ -1,6 +1,6 @@
 ---
 id: tic-6c08
-status: in_progress
+status: closed
 type: task
 priority: 2
 assignee: Jibles
@@ -39,3 +39,7 @@ created: 2026-04-13T12:07:22.280484066Z
 
 Implementation complete. Created signAndBroadcast.ts, chainDetection.ts, historicalToolGuard.ts, ApprovalContext.tsx, ToolExecutionContext.tsx, useToolExecution.ts. Migrated BuildTxCard + SignTypedDataTool to step machine. Removed pendingTx/txResult from chatSessionStore. Deleted useTransactionSigning.ts. All 345 tests pass, TS clean. Fixed pre-existing gap: added cw20 chain dispatch case. Needs manual testing: new tx flow, historical conversation load, conversation switching, tx_ready proposals.
 
+
+**2026-04-23T23:55:05Z**
+
+Closing: implementation commit fee8f58 already on origin/main. Manual verification subsumed by v-llqd dogfood (execute_* cards exercise useToolExecution, ApprovalContext, historicalToolGuard).

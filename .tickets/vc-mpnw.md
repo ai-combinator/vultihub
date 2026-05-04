@@ -1,6 +1,6 @@
 ---
 id: vc-mpnw
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-03-22T09:10:56Z
@@ -543,3 +543,7 @@ The timeout fixes (A, B) and polling improvement are **necessary but not suffici
 3. Ship broadcast fix (D) and error fix (E) — correct code, untestable until swaps work
 4. Investigate server-side swap payload processing time — this is the real blocker for swap reliability
 5. Address password cache TTL — currently limits effective retry window to <5 min
+
+**2026-04-22T01:12:41Z**
+
+Closing per user direction (partially done). DONE: emoji/progress console.logs no longer pollute prod output (only present in test files); linear retry exists in packages/core/mpc/keygenComplete.ts (10 attempts, 1s delay). REMAINING: first-attempt keysign timeout root cause not addressed; no MPC relay pre-warm mechanism; no exponential backoff. Reopen or spin a fresh ticket if the ~50% first-attempt failure rate is still observed.

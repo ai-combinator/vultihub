@@ -1,6 +1,6 @@
 ---
 id: tic-1d38
-status: open
+status: closed
 type: chore
 priority: 2
 assignee: Jibles
@@ -63,3 +63,9 @@ Reduce incidental complexity in the agent chat hook layer by consolidating conte
 - The backend may need to handle "conversation doesn't exist yet" gracefully on the first message POST — verify this works before removing persisted flag, or add a simple "create-on-first-message" behavior server-side
 - chatTransport.ts prepareSendMessagesRequest extracts only the latest user message text (not full history) — this is intentional, do not change it
 - The loading state during conversation switch should be brief (server fetch is fast) — don't add a skeleton loader, just delay setMessages until data is ready
+
+## Notes
+
+**2026-04-22T01:12:34Z**
+
+Closing: persisted flag, pendingSwitchMessagesRef, markConversationPersisted, and double-invalidation in onFinish are all gone from useAgentChat.ts. Context-building collapsed from 3 layers to 2 (transport -> useAgentTools -> agentContext).

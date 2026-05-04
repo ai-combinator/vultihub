@@ -1,6 +1,6 @@
 ---
 id: v-bauf
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-15T21:53:59Z
@@ -23,3 +23,9 @@ Reference: /home/sean/Repos/shapeshift-agentic/apps/agentic-chat/src/components/
 - Drop GenericToolIndicator fallback
 - Move data-confirmation into a schedule_task tool card
 - Backend: split clientSideTools() and relocate data-tool defs to data_tools.go
+
+## Notes
+
+**2026-04-22T01:12:28Z**
+
+Closing: both children (v-gmvc swap-flow stepper, v-uvyo balance fan-out consolidation) are done. AssistantMessageView is now a simple parts iteration matching the shapeshift pattern.

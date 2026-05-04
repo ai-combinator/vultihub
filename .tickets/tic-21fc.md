@@ -1,6 +1,6 @@
 ---
 id: tic-21fc
-status: in_progress
+status: closed
 type: chore
 priority: 2
 assignee: Jibles
@@ -32,3 +32,7 @@ created: 2026-04-13T18:20:21.412630787Z
 
 Implementation complete. navigationIntentStore replaces useRouteParamSync, useConfirmationFlow state bounded + side channel narrowed, useAgentOrchestration consolidates ~15 inline effects from AgentHomeScreen. 5 domain hooks in AgentHomeScreen. TypeScript clean. Needs manual testing.
 
+
+**2026-04-23T23:55:07Z**
+
+Closing: implementation commit 6b215ec already on origin/main. Manual verification implicitly covered by ongoing agent-chat use of AgentHomeScreen + navigationIntentStore + useAgentOrchestration.

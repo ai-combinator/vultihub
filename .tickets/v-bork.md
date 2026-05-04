@@ -1,6 +1,6 @@
 ---
 id: v-bork
-status: open
+status: closed
 deps: []
 links: [v-vgby]
 created: 2026-04-14T02:15:54Z
@@ -49,3 +49,9 @@ Replace the BuildTxCard timeline-style preview with a tabular Action Card (Figma
 - AgentConfirmationCard (schedule path) has its own approval flow — keep it untouched here; v-vgby covers its redesign separately.
 - BuildTxCard already handles a "historical" state via historicalToolIds; preserve that path so scrolling back doesn't re-prompt.
 - ApprovalContext currently kicks off biometric immediately on requestApproval; if biometric auto-triggers, the action-pending stage is skipped. Stage A must be explicit and separate from the biometric/password stage.
+
+## Notes
+
+**2026-04-22T01:12:38Z**
+
+Closing per user direction (partially done). DONE: BuildTxCard.tsx now renders ActionCard with approved/rejected status badges instead of the old timeline preview + in-card Sign button. REMAINING: AgentInputBar.tsx still has no 'Approve or edit the action...' confirmation mode with checkmark; ApprovalContext still single-stage. Track residual input-bar work separately if still desired.

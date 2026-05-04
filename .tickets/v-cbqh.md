@@ -1,6 +1,6 @@
 ---
 id: v-cbqh
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-14T04:34:16Z
@@ -71,3 +71,9 @@ Not blockers for this ticket but worth bundling into the fix:
 - The `npm pack` tarball is ~480 MB (the iOS xcframeworks dominate). Publishing iteration is slow — worth verifying locally with `npm pack && tar -xzf vultisig-mpc-native-*.tgz` and compiling against the extracted tarball, not the workspace link, to catch this class of bug pre-publish.
 - CI in the SDK monorepo apparently doesn't build a downstream consumer against the packed tarball — if it did, this would have been caught. Worth adding that to release workflow.
 - The AARs vendored in `vultisig-sdk/packages/mpc-native/android/libs/` are actual binaries (not LFS pointers after commit 50cbd56a). A contributor's fresh clone with git-lfs not installed WILL see LFS pointer stubs, which is a separate footgun.
+
+## Notes
+
+**2026-04-22T01:12:45Z**
+
+Closing per user direction. @vultisig/mpc-native pinned at ^0.1.3 in vultiagent-app/package.json (was 0.1.2 when ticket was written). Not independently verified that 0.1.3 resolves the godkls/Godkls vs com.silencelaboratories.* SWIG mismatch — run a fresh 'npm run android' on a clean install to confirm before considering this truly done.

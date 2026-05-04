@@ -1,6 +1,6 @@
 ---
 id: v-tixl
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-14T23:35:21Z
@@ -71,3 +71,9 @@ Research anchors (clig.dev, Anthropic MCP docs, gh/stripe/aws CLI patterns): JSO
 - Idempotency key needs to persist across CLI invocations (not just in-process) to actually prevent double-broadcasts on agent retry; a small keyed cache on disk keyed by `(vaultId, key)` → tx hash is the minimum.
 - `--dry-run` JSON shape for swaps needs to include the full route (provider, hops, expected output, fees) plus the unsigned tx; agents rely on the route for user-facing previews.
 - `schema` command output is itself an API — version it (`schema_version: "1"`) so changes can be pinned.
+
+## Notes
+
+**2026-04-22T01:12:40Z**
+
+Closing per user direction (partially done). DONE: curated token registry populated in vultisig-sdk (USDC/USDT/WETH per chain); schema introspection command exists at clients/cli/src/commands/schema.ts; non-TTY requireInteractive() guard in place at tokens.ts:87. REMAINING: user-config tokens still don't write through into TokenDiscoveryService's knownTokensIndex; VasigError hints may still reference non-CLI APIs (e.g. vault.addToken()). Spin a fresh ticket if residual gaps bite an agent session.

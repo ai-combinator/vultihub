@@ -1,6 +1,6 @@
 ---
 id: v-gopv
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-29T01:23:02Z
@@ -84,3 +84,13 @@ Repo: `vultiagent-app`. PR branch: `surgical/v-llqd-execute-cards`.
 - Pass summary through `requestApproval`'s payload so the bar already has it on the ready → signing transition (no prop-drilling needed).
 - gomes' Concern B (BuildTxCard retirement / unified card) is intentionally out of scope here. v-ujuc tracks it. Do not let the BuildTxCard auto-fire fix balloon into a card-rendering refactor.
 - `signingApproval.integration.test.tsx` currently has scenarios assuming auto-arm. Tap-arm rewrite isn't a one-line change — budget meaningful test work.
+
+## Notes
+
+**2026-04-29T01:56:29Z**
+
+Production refactor + tests complete. 1480 unit + 42 component tests pass. tsc 0 errors. biome clean. Acceptance greps empty: no useEffect calls approve/requestApproval, requiresExplicitTap removed, auto-fire refs in signing path deleted (ScheduleTaskTool's confirmation-path autoFiredRef is out-of-scope per ticket). Now running review loop.
+
+**2026-04-29T02:13:44Z**
+
+Committed eaefb06. 1480 unit + 43 component tests pass; tsc 0; biome clean. Approved by spec compliance + final integration review (2 review iterations: BLOCKER on retry-stranding + minor SignTypedData CTA scope, both fixed).

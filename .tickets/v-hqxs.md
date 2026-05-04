@@ -1,6 +1,6 @@
 ---
 id: v-hqxs
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-21T03:31:35Z
@@ -67,3 +67,9 @@ Eliminate the visual desync between UI elements that express "the agent is engag
 - The `chatError` footer path must still work (can appear with no preceding message — auth failure, network drop).
 - A persisted/reloaded conversation must not re-create the pending shell. The shell is purely for the currently-in-flight turn from this client.
 - This change intersects with the existing `useStreamPauseDetector` + `useMessageElapsed` hooks. Don't break their existing semantics; they should key off the unified turn naturally.
+
+## Notes
+
+**2026-04-21T03:47:30Z**
+
+Implemented: pending agent row composed into FlashList data when loading && lastMessageIsUser. AssistantMessageView renders both pending (empty parts + paused=true) and real assistant messages (paused driven by streamPaused for latest). Removed the awaitingContent footer branch; chatError footer preserved. Removed dead elapsedForActive + TimelineEntry/RiveIcon imports. Typecheck clean, lint clean, 673/673 tests pass.

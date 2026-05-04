@@ -1,6 +1,6 @@
 ---
 id: v-uvyo
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-15T21:54:13Z
@@ -28,3 +28,9 @@ Shapeshift-agentic has no equivalent complexity; balance fetching is one tool.
 - 'What is my portfolio' produces one tool call end-to-end.
 - coalesceParts + AggregateToolIndicator deleted with no visual regression.
 - Tool-call metrics show no per-chain balance tools in chat turns.
+
+## Notes
+
+**2026-04-22T01:12:27Z**
+
+Closing: coalesceParts.ts + __tests__/coalesceParts.test.ts + AggregateToolIndicator.tsx all deleted. Coalescing branch (~lines 117-125) removed from AssistantMessageView.tsx. Balance fan-out evidently consolidated server-side as intended.

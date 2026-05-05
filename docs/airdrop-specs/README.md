@@ -11,7 +11,7 @@ For a non-technical walkthrough start with [`overview.md`](overview.md). Technic
 - [`stage-1-boarding.md`](stage-1-boarding.md) — Days 8–12. Three endpoints (`POST /airdrop/register`, `GET /airdrop/status`, `GET /airdrop/stats`), one table.
 - [`stage-2-raffle-draw.md`](stage-2-raffle-draw.md) — Day 12. Single `airdrop-raffle` CLI with `draw`, `load-winners`, `verify-onchain` subcommands. Hands `winners.csv` to the multisig for batched `setWinners(...)` calls. One table for winners.
 - [`stage-3-quest-tracking.md`](stage-3-quest-tracking.md) — Days 13–27. One internal endpoint, two tables, hard-coded validators per quest type. Backend-side eligibility (no on-chain attestation).
-- [`stage-4-claim-relayer.md`](stage-4-claim-relayer.md) — Day 28+. On-chain submission path, operator UI, confirmation monitor. Two tables.
+- [`stage-4-claim-relayer.md`](stage-4-claim-relayer.md) — Day 28+. On-chain submission path, admin-dashboard operator controls, confirmation monitor. Two tables.
 
 ## Sibling missions (other engineers)
 

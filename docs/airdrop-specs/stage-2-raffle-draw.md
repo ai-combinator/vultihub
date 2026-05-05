@@ -76,8 +76,8 @@ All routed from one binary: `airdrop-raffle <subcommand>`.
 4. Otherwise, seed PRNG with `--seed` (or freshly generated u64), run Fisher–Yates shuffle, take the first `slot_count` entries.
 5. For each winner, read `recipient_address` from the registration row.
 6. Serialize artifacts:
-   - `winners.csv` — `public_key, recipient, amount, registered_at, source` per row, header line included. **This is the file the multisig signer reads to construct setWinners batches.**
-   - `manifest.json` — `{ seed, slot_count, vult_amount, registration_count, winner_count, draw_timestamp, undersubscribed: bool }`.
+   - `winners.csv` — `public_key, recipient, amount, registered_at, source, bucket` per row, header line included. **This is the file the multisig signer reads to construct setWinners batches.**
+   - `manifest.json` — `{ seed, slot_count, vult_amount, registration_count, winner_count, draw_timestamp, undersubscribed: bool, bucket_counts }`.
 7. Write both files to `--output-dir`.
 8. Print a summary: winner count, seed, undersubscribed flag, output path. Operator commits the directory to the ops repo for durability.
 

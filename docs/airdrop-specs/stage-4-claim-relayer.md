@@ -9,7 +9,7 @@ Two invariants must hold:
 1. **At most one on-chain claim per user, ever.** Network retries, double-taps, races between threads, restarts mid-submit — none of these can result in two on-chain txs for the same vault.
 2. **No claim is forgotten across service restarts.** If we crash after broadcasting but before recording confirmation, the next process must pick up where we left off.
 
-This is the only stage that touches mainnet. It's also where the operator interface lives — a basic HTML dashboard for monitoring relayer health and triggering manual rebroadcasts on stuck transactions.
+This is the only stage that touches mainnet. It's also where the operator controls live — inside the existing `agent-backend` admin dashboard, for monitoring relayer health and triggering manual rebroadcasts on stuck transactions.
 
 ---
 
@@ -31,9 +31,9 @@ Concurrency model: claim handlers serialize through `SELECT FOR UPDATE` on the r
 | Surface | Auth |
 |---|---|
 | `POST /airdrop/claim` | JWT (existing middleware) |
-| `GET /ops/*`, `POST /ops/*` | HTTP Basic Auth via `OPS_USERNAME` + `OPS_PASSWORD` env vars |
+| `GET /admin/*`, `GET /admin/api/airdrop/*`, `POST /admin/api/airdrop/*` | Existing admin login/session/TOTP middleware. Read-only airdrop views require admin access; rebroadcast requires `super_admin` or the equivalent high-risk admin role. All writes audit-log operator, action, old tx hash, new tx hash, nonce, and gas bump. |
 
-There are no `/internal/relayer/*` routes. The balance + stuck-claims views are served directly from `/ops/balance` and `/ops/stuck-claims` over Basic Auth — same logic, half the surface, one less auth mechanism.
+Do **not** build a separate Basic Auth `/ops/*` dashboard for this campaign. Airdrop operations belong in the existing admin dashboard so they inherit the same auth, role checks, TOTP, and audit trail used for other production controls.
 
 ---
 
@@ -111,24 +111,24 @@ If any of steps 9–14 fail, ROLLBACK. The state row's `next_nonce` is unchanged
 
 The eligibility check in step 4 calls the shared `eligibility.go` helper from Stage 3 (in-process Go function call, not an HTTP roundtrip — eligibility is a pure DB read with no signing or external calls, so the API-endpoint pattern doesn't apply).
 
-There is no `/internal/relayer/*` route group. Balance and stuck-claims health are served directly from `/ops/balance` and `/ops/stuck-claims` (Basic Auth). The data shapes are documented in the Operator interface section below.
+There is no `/internal/relayer/*` route group just to feed UI pages. Balance and stuck-claims health are exposed through the admin API and backed by in-process relayer service calls. The data shapes are documented in the Operator interface section below.
 
 ---
 
-## Operator interface
+## Admin dashboard operator controls
 
-Server-rendered HTML pages using Go's `html/template`. No JS build, no client-side framework. Lives in the same binary, behind HTTP Basic Auth.
+Add an Airdrop section to the existing `agent-backend` admin dashboard. Reuse the current admin static app and admin API patterns; do not introduce a separate UI stack, Basic Auth island, or `/ops` route group.
 
-| Path | Page |
+| Path | Purpose |
 |---|---|
-| `GET /ops` | Landing page. Links to balance, stuck-claims. Shows last-refreshed time. |
-| `GET /ops/balance` | Renders relayer health as a styled table. Auto-refreshes every 30s via `<meta http-equiv="refresh">`. Big red banner if `low_balance_warning`. Shape: `relayer_address`, `eth_balance_wei`/`_human`, `vult_contract_balance_wei`/`_human`, `low_balance_warning`, `low_balance_threshold_eth`, `estimated_claims_remaining`, `next_nonce`, `rpc_block_height`. `estimated_claims_remaining = floor(eth_balance / (avg_gas_per_claim * current_gas_price))`. `low_balance_warning = true` when `eth_balance < LOW_BALANCE_THRESHOLD_ETH`. |
-| `GET /ops/stuck-claims` | Table of submitted-but-unconfirmed claims older than `?older_than_minutes=N` (default 10), sorted by minutes-pending descending. Each row shows `public_key` (first 8), `tx_hash` (linked to Etherscan), `nonce`, `submitted_at`, `minutes_pending`, `max_fee_gwei`, `max_priority_fee_gwei`. Each row has a "Rebroadcast (+50 gwei)" button. Empty table is the healthy state. |
-| `POST /ops/rebroadcast` | Form handler. Reads `{public_key, bump_gwei}` (default 50). Calls the rebroadcast service in-process: sign new EIP-1559 tx with **same nonce** + bumped fees, broadcast, update `tx_hash` + gas fields on the row. Returns 404 if no row, 400 if already confirmed, 503 if RPC failed. Renders a success/error page with the new tx hash + Etherscan link. The old tx and new tx race in the mempool — both share the same nonce so only one can confirm. |
+| `GET /admin` | Existing admin dashboard. Add an Airdrop/Relayer section or nav item. |
+| `GET /admin/api/airdrop/relayer/balance` | Returns relayer health for display: `relayer_address`, `eth_balance_wei`/`_human`, `vult_contract_balance_wei`/`_human`, `low_balance_warning`, `low_balance_threshold_eth`, `estimated_claims_remaining`, `next_nonce`, `rpc_block_height`. `estimated_claims_remaining = floor(eth_balance / (avg_gas_per_claim * current_gas_price))`. `low_balance_warning = true` when `eth_balance < LOW_BALANCE_THRESHOLD_ETH`. |
+| `GET /admin/api/airdrop/relayer/stuck-claims?older_than_minutes=N` | Returns submitted-but-unconfirmed claims older than the threshold (default 10), sorted by minutes-pending descending. Each row includes `public_key` (redacted to first 8 chars in the UI), `tx_hash`, `nonce`, `submitted_at`, `minutes_pending`, `max_fee_gwei`, `max_priority_fee_gwei`. Empty list is the healthy state. |
+| `POST /admin/api/airdrop/relayer/rebroadcast` | High-risk admin action. Reads `{public_key, bump_gwei}` (default 50). Calls the rebroadcast service in-process: sign new EIP-1559 tx with **same nonce** + bumped fees, broadcast, update `tx_hash` + gas fields on the row. Returns 404 if no row, 400 if already confirmed, 503 if RPC failed. The old tx and new tx race in the mempool — both share the same nonce so only one can confirm. |
 
-Pages query the DB + RPC directly via the relayer service — no internal HTTP roundtrip.
+Admin handlers query the DB + RPC through the relayer service — no internal HTTP roundtrip.
 
-Templates in `internal/api/ops/templates/`. CSS inlined into `<style>` blocks (no separate static asset pipeline). One Go file per route.
+Implement the server handlers in the existing admin package and extend the existing admin static assets. Reuse the admin audit logger for rebroadcast attempts and results.
 
 ---
 
@@ -210,11 +210,12 @@ Rebroadcasts update `tx_hash` in place. Audit trail of prior bumps lives in the 
 | `AIRDROP_CLAIM_CONTRACT_ADDRESS` | 0x-address | Same value as Stage 3's `verifyingContract`. |
 | `CLAIM_WINDOW_OPEN_AT` | RFC3339 timestamp | Day 28 wall clock; before this, `/airdrop/claim` returns 403. |
 | `CLAIM_ENABLED` | bool, default true | Operator kill switch. Read on every request — hot-reload by env-var change + service signal, or a redeploy. |
-| `LOW_BALANCE_THRESHOLD_ETH` | decimal, default 0.5 | Triggers `low_balance_warning: true` in `/ops/balance`. |
+| `LOW_BALANCE_THRESHOLD_ETH` | decimal, default 0.5 | Triggers `low_balance_warning: true` in the admin relayer balance view. |
 | `CONFIRMATION_BLOCKS` | int, default 1 | Required reorg depth before marking a tx `confirmed`. |
 | `CONFIRMATION_POLL_INTERVAL_SECONDS` | int, default 15 | How often the monitor checks for receipts. |
-| `OPS_USERNAME` / `OPS_PASSWORD` | strings | HTTP Basic Auth credentials for the operator UI. |
 | `INTERNAL_API_KEY` | string secret | (Reused from Stage 3.) `X-Internal-Token` header value. |
+
+`OPS_USERNAME` and `OPS_PASSWORD` are not Stage 4 config. They belonged to the superseded Basic Auth `/ops/*` dashboard design and should not be present in target prod envs or sample env files.
 
 ---
 
@@ -255,7 +256,7 @@ A Prometheus alert on `airdrop_relayer_eth_balance_wei < 0.5e18` pages ops.
 - Restart-safety: kill the service after the broadcast UPDATE but before… (well, the broadcast and UPDATE are in one txn, so there's no in-between state). Test instead: kill the service immediately after broadcast (one tx in `submitted` state in DB), restart, observe monitor pick up the submitted row on its first tick and confirm against Anvil.
 - Concurrency: 50 concurrent /airdrop/claim calls for 50 distinct eligible users → 50 distinct nonces, 50 distinct tx hashes, no DB constraint violations, all submitted within ~50 seconds.
 - Concurrency: 50 concurrent /airdrop/claim calls for the same user → exactly one tx submitted, 49 idempotent-retry responses with the same tx_hash.
-- Stuck-tx flow: tx broadcast at low gas → never confirms → `/ops/stuck-claims` lists it → `POST /ops/rebroadcast` form with bump → new tx confirms → original is dropped (same nonce).
+- Stuck-tx flow: tx broadcast at low gas → never confirms → admin stuck-claims view lists it → admin rebroadcast action with bump → new tx confirms → original is dropped (same nonce).
 - Balance endpoint returns expected values; low-balance threshold flips the warning.
 
 **End-to-end (with `vultiagent-airdrop`):**
@@ -272,14 +273,12 @@ cmd/scheduler/
 internal/api/airdrop/
 └── claim.go              POST /airdrop/claim handler
 
-internal/api/ops/
-├── handler.go            Routing + inline Basic Auth check (5-line stdlib helper, no shared middleware)
-├── templates/
-│   ├── layout.html
-│   ├── balance.html
-│   ├── stuck_claims.html
-│   └── rebroadcast_result.html
-└── ops.go                One file per page wiring data → template; balance and stuck-claims pages call the relayer service directly; rebroadcast page calls relayer/rebroadcast.go directly
+internal/admin/
+└── airdrop_handlers.go   Admin API handlers for balance, stuck claims, and rebroadcast. Reuse existing admin auth, roles, and audit logging.
+
+internal/admin/static/
+├── index.html            Add Airdrop/Relayer section to the existing admin dashboard shell.
+└── js/app.js             Add relayer balance, stuck claims, and rebroadcast UI using the admin API.
 
 internal/service/airdrop/relayer/
 ├── claim.go              Top-level claim flow (validation → tx build → broadcast → DB). Calls eligibility helper from internal/service/airdrop/quests/eligibility.go. Uses the shared kms + ethclient packages below.
@@ -298,7 +297,7 @@ internal/storage/postgres/
 
 docs/runbooks/
 ├── relayer-day-28.md            "How to bring up the relayer on Day 28"
-└── relayer-stuck-tx.md          "What to do when /ops/stuck-claims has rows"
+└── relayer-stuck-tx.md          "What to do when the admin stuck-claims view has rows"
 ```
 
 ---
@@ -326,11 +325,11 @@ docs/runbooks/
 - Confirmation monitor flips `submitted` → `confirmed` against Anvil within seconds of the receipt landing.
 - Restart test: kill mid-pipeline, restart, observe monitor pick up unfinished work.
 - Rebroadcast endpoint succeeds with bumped gas; original tx is replaced by the new one.
-- `/ops/balance` returns sane values; low-balance flag flips at the configured threshold.
-- `/ops/stuck-claims` lists pending-too-long rows; empty when none.
-- `/ops` UI is reachable behind Basic Auth and renders all four pages correctly.
+- Admin relayer balance API returns sane values; low-balance flag flips at the configured threshold.
+- Admin stuck-claims API lists pending-too-long rows; empty when none.
+- Existing admin dashboard renders the Airdrop/Relayer controls. Read-only views are admin-gated; rebroadcast is high-risk-role-gated and audit-logged.
 - E2E test against Foundry-deployed `AirdropClaim.sol` passes start-to-finish: register → win raffle → multisig calls setWinners → complete quests → claim → VULT received at recipient.
 - Day 28 runbook drafted (`docs/runbooks/relayer-day-28.md`) covering: deploy steps, smoke test, kill switch flip-on. (No manual nonce sync step — that auto-runs on first boot.)
-- Stuck-tx runbook drafted covering: how to read `/ops/stuck-claims`, decide bump amount, handle "still stuck after rebroadcast" case (probably a free RPC throttling issue → switch RPC URL or pay for one).
-- Top-up runbook drafted (`docs/runbooks/relayer-top-up.md`): when `low_balance_warning` fires (or alert fires below 0.5 ETH), the funding multisig sends ETH to the relayer address (visible at the top of `/ops/balance`). Standard EOA send, no contract interaction. Safe to do mid-campaign at any time; no service restart needed. The relayer wallet is fundable from any wallet — there's no allow-list on the receive side.
+- Stuck-tx runbook drafted covering: how to read the admin stuck-claims view, decide bump amount, handle "still stuck after rebroadcast" case (probably a free RPC throttling issue → switch RPC URL or pay for one).
+- Top-up runbook drafted (`docs/runbooks/relayer-top-up.md`): when `low_balance_warning` fires (or alert fires below 0.5 ETH), the funding multisig sends ETH to the relayer address (visible in the admin relayer balance view). Standard EOA send, no contract interaction. Safe to do mid-campaign at any time; no service restart needed. The relayer wallet is fundable from any wallet — there's no allow-list on the receive side.
 - End-of-campaign runbook drafted (`docs/runbooks/relayer-end-of-campaign.md`): once the claim window has decisively closed (e.g. 90 days past `CLAIM_WINDOW_OPEN_AT` with no recent claims), the multisig flips `CLAIM_ENABLED=false` (kill switch — every claim immediately 403s with `CLAIM_DISABLED`), then calls `recoverERC20(VULT, balance, treasuryAddress)` on the contract to drain the unclaimed VULT back to treasury, then optionally calls `recoverERC20` on the relayer wallet's remaining ETH (sent from the relayer via a one-off KMS-signed tx, or just left to fund a future campaign). Document the multisig signers' steps and which etherscan calls to watch.

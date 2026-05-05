@@ -35,11 +35,11 @@ Three distinct auth mechanisms, each owning a clear path prefix:
 |---|---|---|---|
 | `/airdrop/register`, `/airdrop/status`, `/airdrop/claim` | JWT (existing `/auth/token` flow — vault ECDSA sig → 24h JWT) | Mobile app | Existing `internal/api/middleware.go` — no changes needed |
 | `/internal/quests/event` | `X-Internal-Token: <secret>` matching `INTERNAL_API_KEY` env var | The agent-backend's `SignTxProposal` handler (in this same binary), curl by ops | New: `internal/api/internal_token_middleware.go` |
-| `/ops/*` (HTML pages, including `POST /ops/rebroadcast`) | HTTP Basic Auth via `OPS_USERNAME` + `OPS_PASSWORD` env vars | Operator's browser, or curl-from-script | Inlined: 5-line stdlib check in the ops handler |
+| `/admin/*` + `/admin/api/airdrop/*` | Existing agent-backend admin login, TOTP/session cookie, role middleware, audit log | Operators and support staff | Existing `cmd/admin` / `internal/admin`; add airdrop pages and API handlers there |
 | `/airdrop/stats` | None (public) | Marketing | n/a |
 | `/healthz` | None (existing) | Load balancer | Existing |
 
-The internal-token middleware is tiny (~15 lines). Implement it once in the shared infra phase; every internal endpoint picks it up via route registration. Basic Auth is inlined in the ops handler — only one route group uses it, so no shared package warranted.
+The internal-token middleware is tiny (~15 lines). Implement it once in the shared infra phase; every internal endpoint picks it up via route registration. Do **not** build a separate Basic Auth `/ops/*` dashboard for the airdrop: airdrop operations belong in the existing admin dashboard so they inherit roles, TOTP-backed sessions, and audit logging.
 
 ---
 
@@ -63,13 +63,12 @@ All 19 vars across the 5 stages, in one table. Locked values come from the Stage
 | `AIRDROP_CLAIM_CONTRACT_ADDRESS` | 4 | 0x-address | none | Deployed `AirdropClaim.sol` address |
 | `CLAIM_WINDOW_OPEN_AT` | 4 | RFC3339 | none | Day 28 wall clock; claims rejected before |
 | `CLAIM_ENABLED` | 4 | bool | true | Operator kill switch; checked on every request |
-| `LOW_BALANCE_THRESHOLD_ETH` | 4 | decimal | 0.5 | Triggers `low_balance_warning` in balance endpoint |
+| `LOW_BALANCE_THRESHOLD_ETH` | 4 | decimal | 0.5 | Triggers `low_balance_warning` in admin relayer balance view |
 | `CONFIRMATION_BLOCKS` | 4 | int | 1 | Reorg depth before marking confirmed |
 | `CONFIRMATION_POLL_INTERVAL_SECONDS` | 4 | int | 15 | How often the monitor checks receipts |
-| `OPS_USERNAME` | 4 | string | none | Basic Auth user for `/ops/*` |
-| `OPS_PASSWORD` | 4 | string secret | none | Basic Auth password |
-
 Loaded via the existing `internal/config/config.go` with `envconfig` (or whatever the agent-backend uses today). Add fields to the existing struct rather than introducing a new config struct.
+
+`OPS_USERNAME` and `OPS_PASSWORD` are intentionally absent. They belonged to the superseded Basic Auth `/ops/*` dashboard design and should be removed from backend config/sample envs.
 
 ---
 
@@ -121,7 +120,7 @@ Code that should live in one place even though multiple stages use it.
 func (s *Server) InternalTokenMiddleware(next echo.HandlerFunc) echo.HandlerFunc
 ```
 
-Reads `X-Internal-Token` header, compares to `s.internalToken` (constant-time), 401 on mismatch. Used by Stage 3 (`/internal/quests/event`). Stage 4's ops health and stuck-claims views are served directly from `/ops/*` over Basic Auth — no `/internal/relayer/*` route group exists.
+Reads `X-Internal-Token` header, compares to `s.internalToken` (constant-time), 401 on mismatch. Used by Stage 3 (`/internal/quests/event`). Stage 4's operator views are served through the existing admin dashboard; do not add `/internal/relayer/*` routes just to feed UI pages.
 
 ### `internal/service/airdrop/quests/eligibility.go`
 
@@ -199,7 +198,7 @@ Across all stages:
 
 - **Logging.** Structured JSON via the existing `logrus` setup. Always include: `request_id`, `public_key` (first 8 chars only — privacy), the action verb, and `result`. Per-stage specs add fields specific to their domain (`tool_call_id`, `nonce`, `tx_hash`, etc.).
 - **Metrics.** Prometheus, registered under the existing `internal/metrics/` registry. Naming convention `airdrop_<verb>_<unit>` (e.g. `airdrop_register_total`, `airdrop_claim_submit_duration_seconds`). Every endpoint gets a counter + a duration histogram.
-- **Alerts.** One alert worth paging on: `airdrop_relayer_eth_balance_wei < 0.5e18`. Wire to whatever the team uses (PagerDuty, Slack, etc.). Other metrics are dashboard fodder, not page-worthy.
+- **Alerts.** One alert worth paging on: `airdrop_relayer_eth_balance_wei < 0.5e18`. Wire to whatever the team uses (PagerDuty, Slack, etc.). Other metrics are admin-dashboard fodder, not page-worthy.
 - **Tracing.** Use the existing tracing setup if there is one; otherwise nothing new to introduce.
 
 ---
@@ -226,6 +225,6 @@ To keep scope clear:
 - KMS signer can sign a no-op digest against a real (LocalStack) KMS key and the recovered EVM address matches.
 - ETH client can read the latest base fee + block number against a public mainnet RPC.
 
-(Basic Auth coverage lives in Stage 4 — it's inlined in the ops handler, not part of shared infra.)
+(Airdrop operator UI coverage lives in Stage 4 and uses the existing admin auth/role/audit stack, not Basic Auth.)
 
 Once those tick, the per-stage work has the foundations it needs.

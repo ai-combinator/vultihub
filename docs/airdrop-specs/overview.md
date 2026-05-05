@@ -77,14 +77,14 @@ The user taps "claim my VULT." The app POSTs to `/airdrop/claim`. The backend:
 8. A background process watches Ethereum, sees the transaction confirm, and updates our database to "confirmed."
 9. Next time the user polls `/airdrop/status`, they see `already_claimed: true` and the app shows "VULT received!"
 
-### 5. Run an operator dashboard so a human can fix things if they break
+### 5. Use the existing admin dashboard so a human can fix things if they break
 
-A simple HTML page (no JavaScript, just server-rendered) at `/ops` showing:
+An Airdrop section in the existing `agent-backend` admin dashboard showing:
 - How much ETH is left in the relayer wallet (for "we need to top up" alerts).
 - A list of any transactions that have been pending for too long.
 - A "rebroadcast with higher gas" button per stuck transaction.
 
-Behind a username/password.
+This uses the same admin login, roles, TOTP-backed sessions, and audit logging as the rest of the production admin UI. We are not building a separate `/ops` dashboard or a second Basic Auth surface for this campaign.
 
 ---
 
@@ -114,4 +114,4 @@ Lives in the agent-app / station-mobile codebase, built by the mobile engineer:
 
 ## The mental model in one sentence
 
-A small Go service that **takes registrations, picks winners, watches the app for qualifying actions, then pays VULT out of a hot wallet on demand** — with a database keeping track of who's at what stage and a tiny dashboard for ops. Surrounded by an on-chain contract that holds the prize pool, and a mobile app that talks to both.
+A small Go service that **takes registrations, picks winners, watches the app for qualifying actions, then pays VULT out of a hot wallet on demand** — with a database keeping track of who's at what stage and admin-dashboard controls for ops. Surrounded by an on-chain contract that holds the prize pool, and a mobile app that talks to both.

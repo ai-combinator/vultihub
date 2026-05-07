@@ -1,6 +1,6 @@
 ---
 id: v-rjfc
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:41:05Z
@@ -56,3 +56,9 @@ Two halves, both required for release:
 - Does the Skip API return a single signable tx or a multi-message bundle? If multi-message, does our Cosmos-SDK signer handle that, or do we need stepper config?
 - Does Terra v2 LUNA need fee in LUNA or another denom? Pre-flight context implications.
 - Migration path for `build_skip_swap`: deprecate-then-remove, or hard-cut?
+
+## Notes
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#78 + vultisig/agent-backend#272 + vultisig/vultiagent-app#387 (DRAFT)

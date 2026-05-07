@@ -1,6 +1,6 @@
 ---
 id: v-llqd
-status: in_progress
+status: closed
 deps: [v-qjvi]
 links: []
 created: 2026-04-23T23:05:51Z
@@ -137,3 +137,7 @@ Include the chain-id cross-check in `executePrep.validateTxArgsShape`. Gomes agr
 **2026-04-24T00:06:39Z**
 
 Draft PR opened: https://github.com/vultisig/vultiagent-app/pull/242 (base=feat/action-card-send-swap, stacked on PR 229)
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#242

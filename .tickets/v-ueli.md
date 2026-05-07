@@ -1,8 +1,8 @@
 ---
 id: v-ueli
-status: open
+status: closed
 deps: []
-links: []
+links: [v-wcgz]
 created: 2026-05-03T22:41:44Z
 type: bug
 priority: 0
@@ -46,3 +46,17 @@ Pick one or all — diagnose first.
 - Where does title generation happen — SendMessage handler, separate worker, the app? Trace this first.
 - Is the title summarizer a separate LLM call or post-processing of the assistant's first response?
 - Should we add user-editable titles regardless?
+
+## Notes
+
+**2026-05-05T05:32:29Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/430
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch
+
+**2026-05-06T22:17:42Z**
+
+Superseded by v-wcgz. GH #430 / app PR #441 closed the user-visible sidebar leak, and backend #271 added marker guards, but the remaining root-cause work is a backend title-persistence invariant: all title writes should pass through one canonical normalizer/validator before persistence.

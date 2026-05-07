@@ -1,6 +1,6 @@
 ---
 id: v-xkvs
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:43:44Z
@@ -47,3 +47,9 @@ Two issues, both addressed pre-release:
 - Where does step-budget enforcement live in agent-backend? Probably executor loop. Confirm during planning.
 - "Similar args" definition — exact match excluding one field? Edit-distance over JSON? Some structural normalization? Pick during implementation.
 - Wording — keep it short and stop blaming the user. Specific copy can be a product call.
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: per Sean — dropping from active queue

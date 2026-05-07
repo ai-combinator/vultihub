@@ -1,6 +1,6 @@
 ---
 id: v-efsf
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-28T02:07:14Z
@@ -57,3 +57,7 @@ Rewrite `agent-backend/internal/service/agent/prompt.go` to teach the LLM the `e
 **2026-04-28T02:21:09Z**
 
 Rewrote prompt.go (1220→962 lines) to teach execute_send/swap/contract_call/lp_add/lp_remove. Added Tool Routing table, explicit Precedence section ('execute_* over build_*'), and Surviving Escape Hatches section (Rujira FIN/GHOST/staking/CCL, Pumpfun, 6 token-transfer specials). Removed all references to retired build_swap_tx / build_evm_tx / build_*_send from LLM-facing prompt content (one Go developer comment retains the names for context — not in the prompt). Updated structuredOutputSection, behavioralHardeningSection, toolExamplesSection to reference execute_* instead of retired build_* family. Preserved launchsurface flag-aware machinery (renderSystemPrompt + chainsForPrompt + EVM_CHAINS substitution + scheduling on/off gating), BuildVaultInfoSection P0-8 privacy fix, and BuildSystemPartsForCaching cache-aware infrastructure. Removed dead ConfirmActionTool / BuildPolicyTool. Deleted prompt_launchsurface_test.go (per ticket — its assertions were tied to the old SAME-CHAIN SWAPS / provider-substitution prompt). Rewrote VA-169 fiat test to assert execute_*'s natural-language amount strings ('$10', '50%', 'max') instead of build_*'s amount_usd/value_usd. Added regression tests: (1) zero deleted-tool references, (2) surviving escape hatches still documented + FIN scoping, (3) explicit Precedence section. tool_filter.go is category-based (no name-level allowlist), no changes needed. go test ./internal/service/agent/... passes; go build ./... clean. Manual smoke against vultiagent-app PR #242 + mcp-ts#49 still pending — flagged as outstanding.
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/agent-backend#187

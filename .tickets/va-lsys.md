@@ -73,3 +73,13 @@ To avoid re-introducing those concerns: **keep the new visuals inside `features/
 - Icon size bump (10 → 18px) adds ~8px row height; sanity-check on small-screen layouts.
 - `react-native-svg` is already a dependency (used by other cards) — confirm import path matches existing usage.
 - The "Spin the first dot during prep fetch" override in `shared.tsx:97-99` should still apply with the new `StepIcon` — keep that branch so the card has motion before any real step is in flight.
+
+## Notes
+
+**2026-05-05T05:33:03Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/437
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch

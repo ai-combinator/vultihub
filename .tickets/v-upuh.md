@@ -1,6 +1,6 @@
 ---
 id: v-upuh
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:42:01Z
@@ -42,3 +42,17 @@ For comparison, the validator did correctly reject `0xe253425yg` later in the sa
 
 ## Open Questions
 - Existing malformed entries already in users' address books — do we sweep and warn, or leave them?
+
+## Notes
+
+**2026-05-05T05:32:32Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/431
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch
+
+**2026-05-07T00:00:00Z**
+
+Closed: fixed in agent-backend PR #298 (`fix(agent): validate EVM address-book entries`), merged 2026-05-05. GitHub issue vultisig/vultiagent-app#431 closed as stale/duplicate of the backend fix.

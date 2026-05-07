@@ -1,6 +1,6 @@
 ---
 id: v-xfzc
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:43:18Z
@@ -53,3 +53,9 @@ The "hide Polymarket from LLM" path is the same shape as the Rujira FIN drop —
 - Is the failure deterministic on a clean test bet, or only intermittent?
 - Does the failure happen on every market, or only on specific ones (NBA-related vs Fed Chair vs others)?
 - Is there a CLOB sandbox / testnet, or are we burning real USDC.e on test bets?
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: Polymarket cut from v1 scope

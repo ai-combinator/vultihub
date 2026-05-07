@@ -1,6 +1,6 @@
 ---
 id: v-hwjx
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-29T01:36:50Z
@@ -51,3 +51,9 @@ The execute_swap / execute_send / execute_contract_call cards currently render i
 - Do not pull resolved-only labels (provider, rate, slippage, fee, min received) into the loading preview — they don't exist yet and trying to show them re-creates the original bug.
 - Keep the loading preview tight visually so it doesn't cause a height jump when the full card swaps in. If a height jump is unavoidable, that's acceptable — the goal is "everything appears at once when ready," not animated layout continuity.
 - The `fetching_prep.timedOut` case (45s no PREP_RECEIVED) is a separate state with its own banner — make sure the loading preview is replaced by the timeout messaging, not stacked with it.
+
+## Notes
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#294

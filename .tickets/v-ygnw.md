@@ -5,7 +5,7 @@ deps: [v-llqd]
 links: []
 created: 2026-04-24T04:44:32Z
 type: chore
-priority: 2
+priority: 3
 assignee: Jibles
 ---
 # Collapse ExecutionHistoricalGuard into useToolExecution as first-class 'skipped' step
@@ -62,3 +62,9 @@ Replace the `ExecutionHistoricalGuard` wrapper component with a first-class `{ s
 - The auto-fire effect already short-circuits on `isHistorical`; don't add a second gate for `'skipped'` — single source of truth.
 - Ticket v-llqd's acceptance criteria specified the wrapper as a deliverable. This ticket supersedes that choice — call it out in the PR description so reviewers don't re-cite v-llqd.
 - If v-uowg (query cards) or v-zlov (CRUD cards) land first and follow the wrapper pattern, fold them into this migration instead of shipping the refactor in two waves.
+
+## Notes
+
+**2026-05-05T00:19:15Z**
+
+demoted p2 → p3 (meh bucket: internal refactor / polish, no user-facing payoff pre-launch)

@@ -1,7 +1,7 @@
 ---
 links: [v-wdyq, v-ugin]
 id: tic-ef85
-status: open
+status: closed
 type: feature
 priority: 1
 assignee: Jibles
@@ -113,3 +113,7 @@ When this ships, changes needed in vultiagent-cli:
 - `vasig auth` — after password validation, calls `POST /vault/session` to exchange for token, stores token in keyring
 - `vasig auth status` — shows token expiry time
 - SDK's `ServerManager.coordinateFastSigning` — sends `session_token` field instead of `vault_password` (SDK change needed too)
+
+**2026-05-05T00:19:03Z**
+
+killed: superseded by JWT auth flow (hardening tracked in v-kkcj / agent-backend#166)

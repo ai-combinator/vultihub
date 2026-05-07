@@ -59,3 +59,13 @@ Either way the result hooks into `execute_swap` via the chain-family pipeline so
 - If A: integration shape — REST API, embeddable SDK, or smart contract calls? Affects effort.
 - If B: do we vendor Rujira's `SwapRouter` from `@vultisig/rujira-sdk` (already in `mcp-ts/packages/rujira`) as the per-pool quote primitive, or call it via npm dep?
 - Multi-hop signing UX — single approval covering the multi-leg bundle, or one approval per leg? Affects frontend stepper.
+
+## Notes
+
+**2026-05-05T05:33:07Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/438
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch

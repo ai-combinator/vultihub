@@ -5,7 +5,7 @@ deps: []
 links: []
 created: 2026-04-30T01:21:12Z
 type: task
-priority: 2
+priority: 3
 assignee: Jibles
 ---
 # useTransactionFlow / txFlowReducer scope creep — decomposition options
@@ -83,3 +83,9 @@ A different decomposition for the same problem class:
 - **Approval-queue wiring extraction**: split into `usePendingApprovalRegistration(phase, onApprove)` so consent-UX glue lives next to `ApprovalContext`? Trade-off: more files, but each focused.
 - **EVM/non-EVM branching**: centralize the `tx_encoding === 'evm'` decision (currently in reducer HYDRATE + hook two places) into a single helper, e.g. `requiresReceiptPoll(prep)`?
 - **Scope of this work**: one bundled refactor (touches reducer, hook, and persistence callsites) or staged (1: pull pure helpers out, 2: persistence subscriber, 3: extract executor)?
+
+## Notes
+
+**2026-05-05T00:19:15Z**
+
+demoted p2 → p3 (meh bucket: internal refactor / polish, no user-facing payoff pre-launch)

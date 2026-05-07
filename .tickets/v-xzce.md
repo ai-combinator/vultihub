@@ -1,6 +1,6 @@
 ---
 id: v-xzce
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-06T00:16:18Z
@@ -78,3 +78,7 @@ Linked to GitHub issue #13 (MCP Consolidation). This epic covers step 1 of #13's
 **2026-04-06T01:31:37Z**
 
 Tasks 1-5 complete. All merged. 3 critical integration issues fixed. 82 tests passing. Both CLI and MCP packages build.
+
+**2026-05-04T23:56:23Z**
+
+auto-closed: epic overtaken by mcp-ts as separate package + v-pxuw consolidation

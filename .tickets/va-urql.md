@@ -1,6 +1,6 @@
 ---
 id: va-urql
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-22T00:14:00Z
@@ -409,3 +409,9 @@ If any smoke check fails, fix it in-session. Do not hand over a broken branch.
 - pnpm deploy docs: https://pnpm.io/cli/deploy
 - Biome: https://biomejs.dev/
 - v-pxuw ticket: prior multi-repo refactor (tool consolidation) for format reference
+
+## Notes
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#41 monorepo POC (DRAFT)

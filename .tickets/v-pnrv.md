@@ -1,6 +1,6 @@
 ---
 id: v-pnrv
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-27T20:52:16Z
@@ -101,3 +101,9 @@ Whether `client.deposit.getBalances` actually returns partial sets vs. complete 
 - Squash commit: vultisig/mcp-ts@7004de19
 - Reviewer: NeOMakinG (Codex 5.4 adversarial pass) — flagged MEDIUM correctness
 - Rujira SDK: `@vultisig/rujira`, `rcpEndpoint: https://rpc.ninerealms.com`
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: speculative — no observed Rujira partial-response drop in Felix dump; reopen if a real case appears

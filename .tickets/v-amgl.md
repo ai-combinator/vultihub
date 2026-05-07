@@ -1,8 +1,8 @@
 ---
 id: v-amgl
-status: open
+status: closed
 deps: []
-links: []
+links: [v-usxh]
 created: 2026-05-03T22:41:26Z
 type: bug
 priority: 0
@@ -47,3 +47,25 @@ Validator catches what prompt rule can't enforce. Validator preferred long-term;
 - Validator placement: server-side post-LLM, or client-side pre-render? Server-side is safer.
 - Action on hit: re-prompt with forced `get_price`, or strip and append "[price elided]"?
 - Strict vs loose match: do we flag "Bitcoin is around $65k" the same as "BTC is trading at $65,849"?
+
+## Notes
+
+**2026-05-05T05:32:21Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/428
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch
+
+**2026-05-06T21:58:04Z**
+
+Initial rootcause: GH #428 assigned to premiumjibles; local ticket moved in_progress. Repro examples confirmed in 2026-05-01 export. The backend has two checks today, neither catches this class: ValidateResponse only iterates existing price tool records and agent.go only calls it when len(toolResults)>0; validator pipeline has no price-claim-without-price-tool extractor. Existing test explicitly treats a dollar price with nil toolResults as no-op. Prompt has live-price guidance but is insufficient and partly conflicts with fiat execute_* guidance. Root cause is missing server-side grounding enforcement for final assistant price claims when no get_price/get_market_price evidence exists, not absence of a price tool.
+
+**2026-05-06T22:00:40Z**
+
+Research/uproot pass: standard production pattern is layered: clear tool contracts and prompts to encourage the right tool, deterministic/LLM output guardrails to verify final claims against tool evidence, and trajectory evals to pin required tool use. For this bug, prompt/tool-description changes are helpful but insufficient. Best architectural simplification is to move price authority out of free-form narration: price questions either route through get_market_price before final response, or the final response guard rejects/retries any market-price claim without price-tool evidence. search_token should explicitly say it returns no price fields; execute_* fiat guidance should say fiat amount resolution is not permission to narrate spot prices unless the returned quote includes that exact field.
+
+**2026-05-06T22:09:05Z**
+
+Superseded by solution-spec ticket v-usxh. This original bug ticket captured the incident/rootcause; v-usxh carries the implementation spec: targeted prompt cleanup guided by prompt-engineer, tool description tightening, server-side market-price evidence guardrail, and eval coverage.

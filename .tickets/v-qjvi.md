@@ -1,6 +1,6 @@
 ---
 id: v-qjvi
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T22:59:56Z
@@ -115,3 +115,7 @@ The v-pxuw branch on mcp-ts uses SDK exports that are being reverted by v-johx (
 **2026-04-23T23:50:17Z**
 
 Draft PR opened: https://github.com/vultisig/mcp-ts/pull/49
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/mcp-ts#49

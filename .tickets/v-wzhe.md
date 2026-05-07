@@ -87,3 +87,13 @@ get_lp_position
 - Position labelling — use `idx` as user-facing ID, or generate a friendlier handle (e.g. "RUNE/USDC #1")? `idx` is what the contract uses but is opaque ("idx 47821938").
 - Read-side renaming — `getRangePositions` → `get_lp_positions` for naming consistency, or keep current names? Cheap rename if done now; expensive later.
 - Sequencing — strict dependency on `v-xemk` (FIN aggregator), or could this start in parallel reusing the same primitives as they're built?
+
+## Notes
+
+**2026-05-05T05:33:11Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/439
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch

@@ -1,6 +1,6 @@
 ---
 id: v-trcs
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-17T00:19:41Z
@@ -50,3 +50,9 @@ Three paths worth considering, rough order of effort/cost:
 - Engineering Brief → Eligibility workstream (v-vultiverse deck)
 - `PRD-ELIGIBILITY-TRACKING.md` US-0 (extractor), US-1 (loader)
 - Pre-Flight Status row "Terra Classic address snapshot?" marked BLOCKED
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: per Sean — dropping from active queue

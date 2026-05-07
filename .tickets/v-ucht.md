@@ -64,3 +64,13 @@ throw new TokenResolutionError(
 - `searchToken()` in the resolver is the underlying CoinGecko helper; do not confuse with the `search_token` MCP tool the agent calls
 - The prompt rewrite touches three sites — review the QA fixture suite at `scripts/qa/curl-replay/` for token-resolution flows; add or rebaseline fixtures so the new "execute-first, search-on-ambiguity" path has regression coverage
 - This ticket pairs with v-vvep (per-chain balance fan-out cleanup) — both surfaced from the same reproduction; landing them together gives the cleanest swap UX, but they are independent and either can ship first
+
+## Notes
+
+**2026-05-05T05:32:56Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/435
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch

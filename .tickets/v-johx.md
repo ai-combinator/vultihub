@@ -1,6 +1,6 @@
 ---
 id: v-johx
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-22T19:38:31Z
@@ -93,3 +93,9 @@ All three are low-value on their own; not worth the surgical effort to preserve.
 - The `prep/` helpers currently imported by `VaultBase` / `TransactionBuilder` / `SwapService` use `vaultDataToIdentity(this.vaultData)` + `this.wasmProvider.getWalletCore()`; the pre-0.17 inline versions use `this.vaultData.publicKeys` directly and call `getPublicKey({...})` inline. Don't half-restore.
 - `chainPublicKeys` threading also touches `TransactionBuilder.estimateSendFee` (line ~140 in the 0.17 file) — make sure the revert removes that `chainPublicKeys: this.vaultData.chainPublicKeys` argument from the `getPublicKey` call.
 - Once 0.18.0 publishes, the `file:` override grep still applies to any dev branches: `grep -E 'file:\.\./|workspace:' package.json pnpm-lock.yaml` before pushing anything.
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: premise overtaken — replacement PRs (mcp-ts#49, app#242) merged consuming the SDK 0.17.0 helpers; revert is moot

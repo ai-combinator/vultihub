@@ -1,6 +1,6 @@
 ---
 id: v-ugzl
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-28T02:19:05Z
@@ -114,3 +114,7 @@ T2 ported (224e67c) + T3 shared.tsx refactored (8921c0f). T2 spec+code-quality r
 **2026-04-28T02:59:30Z**
 
 Build complete. 8 commits on surgical/v-llqd-execute-cards (20a92f0 → 65a8a8a). All 4 cards rewritten on useTransactionFlow; net -63 LOC across cards (-89 with shared.tsx). tsc clean, biome clean (175 files), reducer suite 38/38, jest 656/656 (2 pre-existing suite-load failures unrelated to v-ugzl: receiveCardSchemas + toolUIRegistry fail at expo-local-authentication ESM transform — also fails on baseline). Two T2 follow-ups deferred to separate tickets: (1) PASSWORD_INVALID rewind dead-end (consentRegisteredRef blocks re-registration after slot externally clears); (2) lost-consent on contended requestApproval returning false. Both inherit from v-pxuw 7fba772 by design.
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#242 (rolled into v-llqd ExecuteCards)

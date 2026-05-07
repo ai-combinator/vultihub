@@ -1,6 +1,6 @@
 ---
 id: v-xbtm
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:45:24Z
@@ -25,3 +25,9 @@ Refer to the investigation ticket for findings — full reproduction, root cause
 
 ## Open Questions
 - All — root cause and fix shape are determined by the investigation ticket. This ticket is a placeholder for the fix work.
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: Polymarket cut from v1 scope (was gated on v-xfzc)

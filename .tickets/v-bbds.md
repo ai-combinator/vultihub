@@ -5,7 +5,7 @@ deps: []
 links: []
 created: 2026-04-30T01:35:21Z
 type: chore
-priority: 2
+priority: 3
 assignee: Jibles
 ---
 # execute_* card flow: collapse parallel-truth state model into pointer + steps
@@ -90,3 +90,9 @@ Structural invariant: at most one step is non-COMPLETE/NOT_STARTED at any time. 
 - Cancellation sentinel: `error === 'Transaction cancelled.'` exact-match still applies for hydrate-classification (don't substring-match).
 - `IDLE_TIMEOUT_FIRED` only applies when `prep === null` — the `timedOut` flag stays a sibling of prep, not folded into outcome.
 - Tests assert observable transitions; codemod or careful sed gets most of them, but watch for tests that pattern-match on `phase.kind` field shape rather than just transition outcomes.
+
+## Notes
+
+**2026-05-05T00:19:15Z**
+
+demoted p2 → p3 (meh bucket: internal refactor / polish, no user-facing payoff pre-launch)

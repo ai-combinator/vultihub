@@ -1,6 +1,6 @@
 ---
 id: v-uowg
-status: in_progress
+status: closed
 deps: [v-whzf, v-hiry, v-zhop, v-llqd]
 links: []
 created: 2026-04-23T23:06:23Z
@@ -102,3 +102,7 @@ If reviewer bandwidth is tight, this ticket can be split into three sub-PRs: DeF
 **2026-04-24T00:26:37Z**
 
 Draft PR opened: https://github.com/vultisig/vultiagent-app/pull/244
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/vultiagent-app#244 (DRAFT)

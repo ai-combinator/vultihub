@@ -234,6 +234,120 @@
         .badge--blue { border-color: var(--blue); color: var(--blue); }
         .badge--green { border-color: var(--green); color: var(--green); }
 
+        /* Feature cards */
+        .feature-grid {
+            display: grid;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        .feature-grid--3x2 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+        }
+        .feature-grid--2x2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .feature-grid--2x3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 700px) {
+            .feature-grid--3x2 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.8rem, 1.8vw, 1.5rem);
+            transition: border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: rgba(0, 255, 204, 0.25);
+        }
+        .feature-card h3 {
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.4rem);
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .feature-card .card-icon {
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.5rem);
+        }
+
+        /* Phase overview cards */
+        .phase-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+        }
+        @media (max-width: 600px) {
+            .phase-row { grid-template-columns: 1fr; }
+        }
+        .phase-card {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 16px);
+            padding: clamp(1.25rem, 2.5vw, 2rem);
+            border-left: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1vh, 0.75rem);
+        }
+        .phase-card--2 { border-left-color: var(--magenta); }
+        .phase-card--3 { border-left-color: var(--amber); }
+        .phase-card .phase-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        .phase-card--1 .phase-num { color: var(--cyan); }
+        .phase-card--2 .phase-num { color: var(--magenta); }
+        .phase-card--3 .phase-num { color: var(--amber); }
+        .phase-card h3 {
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+        }
+        .phase-card p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* Bullet list with glowing dots */
+        .glow-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.75rem, 1.5vh, 1.5rem);
+        }
+        .glow-list li {
+            padding-left: clamp(1rem, 2vw, 1.5rem);
+            position: relative;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .glow-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+        .glow-list--magenta li::before {
+            background: var(--magenta);
+            box-shadow: 0 0 8px var(--magenta-glow);
+        }
+        .glow-list--amber li::before {
+            background: var(--amber);
+            box-shadow: 0 0 8px rgba(255,170,0,0.3);
+        }
+
         /* Stats row */
         .stats-row {
             display: flex;
@@ -264,7 +378,7 @@
 
         /* Section description */
         .section-desc {
-            max-width: min(65ch, 80vw);
+            max-width: none;
         }
 
         /* ===========================================
@@ -322,6 +436,43 @@
         .verdict--blocked { color: var(--red); background: var(--red-dim); }
         .verdict--stalled { color: var(--text-muted); background: rgba(255,255,255,0.06); }
 
+        /* Highlighted row */
+        .model-row--highlight td {
+            background: rgba(0, 255, 204, 0.04);
+        }
+
+        /* Methodology cards */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.5rem, 1vw, 0.75rem);
+        }
+        @media (max-width: 700px) {
+            .method-grid { grid-template-columns: 1fr; }
+        }
+        .method-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 255, 204, 0.08);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+        }
+        .method-card h3 {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            margin-bottom: clamp(0.15rem, 0.3vh, 0.25rem);
+            color: var(--text-primary);
+        }
+        .method-card p {
+            font-size: var(--small-size);
+            line-height: 1.35;
+        }
+        .method-num {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--cyan);
+            letter-spacing: 0.1em;
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.2rem);
+        }
+
         /* ===========================================
            MISSION STATUS BADGES
            =========================================== */
@@ -343,7 +494,47 @@
         .status-badge--p1 { color: var(--magenta); background: var(--magenta-dim); }
         .status-badge--p2 { color: var(--blue); background: var(--blue-dim); }
 
-        /* Progress bar mini */
+        /* Mission cards */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .mission-grid { grid-template-columns: 1fr; }
+        }
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .mission-card__header {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+            flex-wrap: wrap;
+        }
+        .mission-card__title {
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .mission-card__desc {
+            font-size: var(--small-size);
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .mission-card__progress {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+        }
         .progress-bar-mini {
             flex: 1;
             height: 4px;
@@ -360,8 +551,14 @@
         .progress-bar-mini__fill--cyan { background: var(--cyan); }
         .progress-bar-mini__fill--amber { background: var(--amber); }
         .progress-bar-mini__fill--magenta { background: var(--magenta); }
+        .progress-pct {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
 
-        /* Delta chip */
+        /* Delta chip — shows weekly progress delta next to percentage */
         .delta {
             font-family: var(--font-mono);
             font-size: clamp(0.5rem, 0.7vw, 0.65rem);
@@ -372,33 +569,143 @@
         .delta--down { color: var(--red); }
         .delta--flat { color: var(--text-muted); }
 
-        /* Glow list */
-        .glow-list {
+        /* ===========================================
+           CHECKLIST
+           =========================================== */
+        .check-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: clamp(0.6rem, 1.2vh, 1.2rem);
+            gap: clamp(0.3rem, 0.7vh, 0.6rem);
         }
-        .glow-list li {
-            padding-left: clamp(1rem, 2vw, 1.5rem);
-            position: relative;
-            font-size: var(--body-size);
+        .check-list li {
+            font-size: var(--small-size);
             color: var(--text-secondary);
-            line-height: 1.5;
+            padding-left: clamp(1.2rem, 2vw, 1.5rem);
+            position: relative;
+            line-height: 1.4;
         }
-        .glow-list li::before {
-            content: '';
+        .check-list li::before {
             position: absolute;
             left: 0;
-            top: 0.55em;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--cyan);
-            box-shadow: 0 0 8px var(--cyan-glow);
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+        }
+        .check-list li.done { color: var(--text-muted); }
+        .check-list li.done::before { content: '✓'; color: var(--green); }
+        .check-list li.todo::before { content: '○'; color: var(--text-muted); }
+        .check-list li.wip::before { content: '◐'; color: var(--cyan); }
+
+        /* ===========================================
+           CALLOUT BOX
+           =========================================== */
+        .callout {
+            background: var(--bg-card);
+            border-radius: clamp(6px, 1vw, 12px);
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+        }
+        .callout--cyan { border-color: rgba(0, 255, 204, 0.2); }
+        .callout--green { border-color: rgba(57, 211, 83, 0.2); background: rgba(57, 211, 83, 0.04); }
+        .callout--magenta { border-color: rgba(255, 0, 170, 0.2); }
+        .callout--red { border-color: rgba(255, 68, 102, 0.25); background: rgba(255, 68, 102, 0.04); }
+
+        /* ===========================================
+           OPTION COMPARISON (A vs B)
+           =========================================== */
+        .option-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+        @media (max-width: 700px) {
+            .option-split { grid-template-columns: 1fr; }
+        }
+        .option-box {
+            background: var(--bg-card);
+            border-radius: clamp(8px, 1vw, 14px);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-top: 3px solid var(--cyan);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vh, 0.5rem);
+        }
+        .option-box--b { border-top-color: var(--magenta); }
+        .option-box__label {
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .option-box h3 {
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
         }
 
-        /* Title slide orbs / scanline */
+        /* ===========================================
+           DEGRADATION TIMELINE
+           =========================================== */
+        .degrade-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.6rem, 1.2vh, 1rem);
+        }
+        .degrade-item {
+            display: grid;
+            grid-template-columns: clamp(3rem, 6vw, 5rem) 1fr;
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+            align-items: start;
+            padding-bottom: clamp(0.5rem, 1vh, 0.75rem);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .degrade-item:last-child { border-bottom: none; }
+        .degrade-pct {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .degrade-body h3 {
+            font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+            margin-bottom: clamp(0.1rem, 0.2vh, 0.15rem);
+        }
+        .degrade-body p {
+            font-size: var(--small-size);
+            line-height: 1.4;
+        }
+
+        /* ===========================================
+           SCROLL ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+        .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+
+        /* ===========================================
+           TITLE SLIDE
+           =========================================== */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .title-slide .slide-content {
+            align-items: center;
+            gap: clamp(0.75rem, 2vh, 2rem);
+        }
+        .title-slide .badge { align-self: center; }
+
         .title-orb {
             position: absolute;
             border-radius: 50%;
@@ -428,6 +735,21 @@
             66% { transform: translate(-10px, 15px); }
         }
 
+        .title-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-meta {
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
         .scanline {
             position: absolute;
             top: 0; left: 0;
@@ -445,23 +767,25 @@
         }
 
         /* ===========================================
-           SCROLL ANIMATIONS
+           VISION SLIDE
            =========================================== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(25px);
-            transition: opacity var(--duration-normal) var(--ease-out-expo),
-                        transform var(--duration-normal) var(--ease-out-expo);
+        .vision-slide .slide-content {
+            align-items: center;
+            text-align: center;
+            gap: clamp(1.25rem, 3vh, 3rem);
         }
-        .slide.visible .reveal {
-            opacity: 1;
-            transform: translateY(0);
+        .vision-slide .badge { align-self: center; }
+        .vision-quote {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            font-weight: 600;
+            line-height: 1.3;
+            max-width: min(55ch, 85vw);
+            background: linear-gradient(135deg, var(--text-primary), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
-        .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
-        .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
-        .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
-        .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
 
         /* ===========================================
            PROGRESS BAR
@@ -531,11 +855,11 @@
     <section class="slide" aria-label="Mission Board">
         <div class="slide-content">
             <div style="display: flex; align-items: center; gap: var(--element-gap); flex-wrap: wrap;">
-                <div class="badge reveal">Week 5 &middot; April 27, 2026</div>
+                <div class="badge reveal">Week 5 &middot; May 5, 2026</div>
                 <span class="reveal" style="font-family: var(--font-mono); font-size: var(--mono-size); color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase;">Vultiagent &middot; Internal</span>
             </div>
             <h2 class="reveal">Mission Board</h2>
-            <p class="section-desc reveal">Agent reliability rearchitecture and credits v2 shipped. Vultiverse Airdrop foundations live end-to-end. Station Android 5.0.0 approved by Google, awaiting promotion. The parked tool-consolidation jumbo retired in favour of small surgical PRs. AirdropClaim contract picked up by NeO. SDK Unification re-scoped to count this week's RN keysign + harness + normalizeChain consolidation work.</p>
+            <p class="section-desc reveal">Big shipping week. Chain &amp; swap support and the SDK rebuild both close out. The Vultiverse airdrop claim contract is done. The agent's transaction tools were simplified across the app. LUNC support advances (Osmosis bridge live, Cosmos staking added). Vultiverse airdrop sign-up and quest tracking both live in production. One new mission proposed: a Security pillar.</p>
 
             <div class="model-table reveal">
                 <table>
@@ -550,119 +874,140 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Already shipped: held at 100% -->
-                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
-                            <td class="mono">15</td>
-                            <td style="color: var(--text-primary);">CLI Agent-Friendliness</td>
-                            <td>Jibles</td>
-                            <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
-                            <td><span class="verdict verdict--done">Shipped</span></td>
-                        </tr>
-                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
-                            <td class="mono">2</td>
-                            <td style="color: var(--text-primary);">Agent Chat Architecture v2</td>
-                            <td>Jibles</td>
-                            <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
-                            <td><span class="verdict verdict--done">Shipped</span></td>
-                        </tr>
-                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
-                            <td class="mono">13</td>
-                            <td style="color: var(--text-primary);">MCP Consolidation</td>
-                            <td>gomes</td>
+                        <!-- Luna ecosystem support — gomes TerraClassic LUNC/USTC + Astroport + Skip + IBC shipped; NeO Cosmos staking writes folded in (scheduler + dispatch + verifier schemas in flight) -->
+                        <tr class="model-row--winner">
+                            <td class="mono">20</td>
+                            <td style="color: var(--text-primary);">Luna ecosystem support</td>
+                            <td>gomes <span style="color: var(--text-muted); font-size: 0.85em;">(+ NeO Cosmos staking)</span></td>
                             <td><span class="status-badge status-badge--p2">P2</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
-                            <td><span class="verdict verdict--done">Shipped</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+80</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
                         </tr>
-                        <tr>
-                            <td class="mono">11</td>
-                            <td>Team Infra &amp; Process</td>
+                        <!-- #17 Tool Consolidation: 55% In Review (4 drafts) → 85% In Progress — execute_* family LANDED -->
+                        <tr class="model-row--winner">
+                            <td class="mono">17</td>
+                            <td style="color: var(--text-primary);">Tool Consolidation</td>
                             <td>Jibles</td>
                             <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
-                            <td><span class="verdict verdict--done">Done</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 85%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">85%<span class="delta delta--up">+30</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
                         </tr>
-                        <!-- Station: 95% -> 98% (Google approved 5.0.0 Apr 22, awaiting promotion; iOS still ASC-blocked) -->
+                        <!-- #7 Chain & Swap Coverage: 72% → 100% Done -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
+                            <td class="mono">7</td>
+                            <td style="color: var(--text-primary);">Chain &amp; Swap Coverage</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+28</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #18 Vultiverse Airdrop backend: Stage 1 shipped, buckets shipped, quest tracking landed (gomes drove #232 promotion); auto-registration #319 still open. Owner: Apotheosis. -->
+                        <tr class="model-row--winner">
+                            <td class="mono">18</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop &mdash; backend</td>
+                            <td>Apotheosis</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 90%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">90%<span class="delta delta--up">+70</span></span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- App basic functionality stability — Jibles per board; reality is Jibles + NeO co-driving -->
+                        <tr class="model-row--winner">
+                            <td class="mono">21</td>
+                            <td style="color: var(--text-primary);">App basic functionality stability</td>
+                            <td>Jibles <span style="color: var(--text-muted); font-size: 0.85em;">(+ NeO co-drive)</span></td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 75%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">75%</span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- #4 Station App Takeover: 95% Play Store review → 95% Apple Review (resubmitted Apr 29 w/ display name + scroll + demo access fixes) -->
                         <tr class="model-row--winner">
                             <td class="mono">4</td>
                             <td style="color: var(--text-primary);">Station App Takeover</td>
                             <td>Apotheosis</td>
                             <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 98%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">98%<span class="delta delta--up">+3</span></span></div></td>
-                            <td><span class="verdict verdict--review">Play Store approved</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 95%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">95%<span class="delta delta--flat">&plusmn;0</span></span></div></td>
+                            <td><span class="verdict verdict--review">Apple Review</span></td>
                         </tr>
-                        <!-- Agent Stability: 62% -> 80% (reliability rearch landed, pr-receipts infra, QA harness, polyfill cleanup) -->
-                        <tr class="model-row--winner">
-                            <td class="mono">16</td>
-                            <td style="color: var(--text-primary);">Agent Stability &amp; UX Polish</td>
-                            <td>NeOMakinG</td>
-                            <td><span class="status-badge status-badge--p2">P2</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+18</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
-                        </tr>
-                        <!-- Chain & Swap: 72% -> 80% (tokens-mvp, rujira CCL, chainId guard, gas floors) -->
-                        <tr class="model-row--winner">
-                            <td class="mono">7</td>
-                            <td style="color: var(--text-primary);">Chain &amp; Swap Coverage</td>
-                            <td>gomes</td>
-                            <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+8</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
-                        </tr>
-                        <!-- Vultiverse Airdrop backend: 20% -> 45% (foundations + tracking merged, end-to-end live) -->
-                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.04);">
-                            <td class="mono">18</td>
-                            <td style="color: var(--text-primary);">Vultiverse Airdrop, backend pipeline</td>
-                            <td>Apotheosis</td>
-                            <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 45%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">45%<span class="delta delta--up">+25</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
-                        </tr>
-                        <!-- Chat-First Onboarding: 45% -> 55% (credits v2, receive crypto, credit dashboard) -->
-                        <tr class="model-row--winner">
+                        <!-- #12 Chat-First Onboarding: 45% → 100% Done -->
+                        <tr class="model-row--winner" style="background: rgba(57, 211, 83, 0.06);">
                             <td class="mono">12</td>
                             <td style="color: var(--text-primary);">Chat-First Onboarding</td>
                             <td>gomes</td>
                             <td><span class="status-badge status-badge--p2">P2</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 55%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">55%<span class="delta delta--up">+10</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+55</span></span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
                         </tr>
-                        <!-- Billing & Token Gating: 15% -> 25% (credits v2 shipped via gomes) -->
-                        <tr class="model-row--winner">
-                            <td class="mono">14</td>
-                            <td style="color: var(--text-primary);">Billing &amp; Token Gating</td>
-                            <td>Apotheosis <span style="color: var(--text-muted); font-size: 0.85em;">(credits v2 by gomes)</span></td>
-                            <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 25%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">25%<span class="delta delta--up">+10</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
-                        </tr>
-                        <!-- AirdropClaim contract: NEW assignee (NeO bootstrapped Foundry, refactored to winners-allowance) -->
+                        <!-- PROPOSED: Security Audit & Hardening — Blockaid L4 (#196/#237/#238 CANARY), per-tx biometric reprompt (#321/#345/#316), analytics PII guards (#238), pre-sign scan_request envelope (mcp-ts#61), burn-address recipient checks -->
                         <tr class="model-row--winner" style="background: rgba(0, 255, 204, 0.04);">
-                            <td class="mono">19</td>
-                            <td style="color: var(--text-primary);">Vultiverse Airdrop, AirdropClaim contract <span style="color: var(--cyan); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">ASSIGNED</span></td>
-                            <td>NeOMakinG</td>
+                            <td class="mono">22</td>
+                            <td style="color: var(--text-primary);">Security Audit &amp; Hardening <span style="color: var(--cyan); font-family: var(--font-mono); font-size: 0.7em; letter-spacing: 0.1em; margin-left: 0.4em;">PROPOSED</span></td>
+                            <td>NeO</td>
                             <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 25%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">25%<span class="delta delta--up">+25</span></span></div></td>
-                            <td><span class="verdict verdict--go">In Progress</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 60%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">60%<span class="delta delta--up">NEW</span></span></div></td>
+                            <td><span class="verdict verdict--go">Proposed</span></td>
                         </tr>
-                        <!-- Tool Consolidation: 55% -> 60% (jumbo retired, surgical stack opened) -->
-                        <tr class="model-row--winner">
-                            <td class="mono">17</td>
-                            <td style="color: var(--text-primary);">Tool Consolidation (~136 to ~30 tools)</td>
+                        <!-- #2 Agent Chat Architecture v2: 100% Shipped, no change -->
+                        <tr>
+                            <td class="mono">2</td>
+                            <td>Agent Chat Architecture v2</td>
                             <td>Jibles</td>
                             <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 60%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">60%<span class="delta delta--up">+5</span></span></div></td>
-                            <td><span class="verdict verdict--review">6 surgical PRs open</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
                         </tr>
-                        <!-- SDK Unification: 55% -> 80% (RN keysign fix unblocks all migration candidates, test harness + Android wiring, normalizeChain replaces hand-rolled chain normalizer in app) -->
-                        <tr class="model-row--winner">
+                        <!-- #15 CLI Agent-Friendliness: 100% Shipped, no change -->
+                        <tr>
+                            <td class="mono">15</td>
+                            <td>CLI Agent-Friendliness</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #13 MCP Consolidation: 100% Shipped -->
+                        <tr>
+                            <td class="mono">13</td>
+                            <td>MCP Consolidation</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Shipped</span></td>
+                        </tr>
+                        <!-- #1 Unify Chain Logic into SDK: 55% → 100% Done -->
+                        <tr>
                             <td class="mono">1</td>
                             <td style="color: var(--text-primary);">Unify Chain Logic into SDK</td>
-                            <td>NeOMakinG</td>
+                            <td>NeO</td>
                             <td><span class="status-badge status-badge--p1">P1</span></td>
-                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 80%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">80%<span class="delta delta--up">+25</span></span></div></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%<span class="delta delta--up">+45</span></span></div></td>
+                            <td><span class="verdict verdict--done">Done</span></td>
+                        </tr>
+                        <!-- #14 Billing & Token Gating: 15% → 50%, picked up by gomes -->
+                        <tr>
+                            <td class="mono">14</td>
+                            <td>Billing &amp; Token Gating</td>
+                            <td>gomes</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--cyan" style="width: 50%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">50%<span class="delta delta--up">+35</span></span></div></td>
                             <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- #19 Vultiverse Airdrop AirdropClaim contract: NeO scaffolded Foundry project Apr 23 (vultiagent-airdrop repo); ~25% done -->
+                        <tr>
+                            <td class="mono">19</td>
+                            <td style="color: var(--text-primary);">Vultiverse Airdrop &mdash; AirdropClaim contract</td>
+                            <td>NeO</td>
+                            <td><span class="status-badge status-badge--p1">P1</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--amber" style="width: 25%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">25%</span></div></td>
+                            <td><span class="verdict verdict--go">In Progress</span></td>
+                        </tr>
+                        <!-- Model Research & Commercial Analysis (Jibles) — done a while ago, not new -->
+                        <tr>
+                            <td class="mono">24</td>
+                            <td>Model Research &amp; Commercial Analysis</td>
+                            <td>Jibles</td>
+                            <td><span class="status-badge status-badge--p2">P2</span></td>
+                            <td><div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.6vw, 0.5rem);"><div class="progress-bar-mini" style="min-width: clamp(40px, 6vw, 80px);"><div class="progress-bar-mini__fill progress-bar-mini__fill--green" style="width: 100%;"></div></div><span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.75vw, 0.7rem); color: var(--text-muted); min-width: 2.2em; text-align: right;">100%</span></div></td>
+                            <td><span class="verdict verdict--done">Done</span></td>
                         </tr>
                         <!-- Unassigned P2s -->
                         <tr style="opacity: 0.6;">
@@ -693,16 +1038,16 @@
                 </table>
             </div>
 
-            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">Four missions still hold at 100%. Station Android one promotion away from full completion. NeO picks up #19 (AirdropClaim contract) on top of SDK Unification, stability, and Station migration tracks.</p>
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-muted);">Nine missions shipped or done. Cosmos staking folded under Luna. Security Audit &amp; Hardening proposed as a new mission, covering transaction safety scanning, biometric checks on every signature, and locking down user data in our analytics.</p>
         </div>
     </section>
 
 
 
     <!-- ===========================================
-         SLIDE 2: WHAT SHIPPED
+         SLIDE 2: THIS WEEK
          =========================================== -->
-    <section class="slide" aria-label="What Shipped">
+    <section class="slide" aria-label="This Week">
         <div class="title-orb title-orb--1" style="opacity: 0.2;"></div>
         <div class="title-orb title-orb--2" style="opacity: 0.2;"></div>
         <div class="scanline"></div>
@@ -711,57 +1056,90 @@
         <div class="slide-content">
             <div class="badge badge--green reveal">This Week</div>
             <h2 class="reveal">What Shipped</h2>
-            <p class="section-desc reveal">Agent reliability rearchitecture, credits v2, Vultiverse airdrop foundations, RN keysign fix, and Station Android approval all landed. Tool consolidation pivoted from a parked jumbo to a surgical PR stack.</p>
+            <p class="section-desc reveal">Reliability week. Agent transaction tools simplified across the app. LUNC support lands. Airdrop sign-up live. NeO clears 25+ user-reported bugs.</p>
 
             <div class="stats-row reveal">
                 <div>
-                    <div class="stat-value" style="color: var(--cyan);">188</div>
+                    <div class="stat-value" style="color: var(--cyan);">148</div>
                     <div class="stat-label">PRs merged</div>
                 </div>
                 <div>
-                    <div class="stat-value" style="color: var(--amber);">90</div>
+                    <div class="stat-value" style="color: var(--amber);">53</div>
                     <div class="stat-label">Open PRs</div>
                 </div>
                 <div>
-                    <div class="stat-value" style="color: var(--magenta);">840+</div>
-                    <div class="stat-label">Commits</div>
+                    <div class="stat-value" style="color: var(--green);">+81k</div>
+                    <div class="stat-label">Lines added</div>
                 </div>
                 <div>
-                    <div class="stat-value" style="color: var(--green);">2</div>
-                    <div class="stat-label">SDK releases</div>
+                    <div class="stat-value" style="color: var(--blue);">3</div>
+                    <div class="stat-label">Prod releases</div>
                 </div>
             </div>
+            <p class="reveal" style="font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em; margin-top: -0.5rem;">Scope: gomes, NeO, Apotheosis, Jibles. Excludes other contributors, bots, the spec repo, and auto-generated dependency files.</p>
 
             <ul class="glow-list reveal">
-                <li><strong style="color: var(--magenta);">Gomes, agent reliability rearchitecture merged</strong> after 6 review rounds with NeO and 260+ commits across the R1-R10 loop. agent-backend#146 ships 21 validators, retry orchestrator, loop breaker, vault-key redaction, and a fund-safety catch (LLM-smuggled <code style="font-family: var(--font-mono); color: var(--cyan);">auto_execute</code> scrubbed before sign). Plus credits v2 (#162), receive crypto end-to-end (#233 + mcp-ts#42), and a pr-receipts CI gate (vultiagent-app#227, #251-#254).</li>
-                <li><strong style="color: var(--green);">Apotheosis, Vultiverse Airdrop foundations live end-to-end.</strong> agent-backend#150 + #159 and mcp-ts#45 merged. Live run with real OpenRouter, AWS signer, Ethereum, Thorchain, and LI.FI captured 6 proposed transactions in the new tracking block correctly. Spec set consolidated into vultihub#21; station-mobile#70 leaves a redirect stub for old paths.</li>
-                <li><strong style="color: var(--amber);">Apotheosis, Station Android 5.0.0 approved by Google</strong> on Apr 22. Awaiting marketing-aligned promotion. iOS 5.0.0 still blocked on ASC Admin keychain group declaration since Apr 17.</li>
-                <li><strong style="color: var(--cyan);">NeO, RN keysign fix lands</strong> in vultisig-sdk#306, bundle 3.9MB to 791KB, all 31 ECDSA + 6 EdDSA chains signing. SDK test harness expanded with 9 new categories and Android Gradle wiring (sdk-test-harness#3). AirdropClaim contract bootstrapped in vultiagent-airdrop with the merkle-proof flow refactored to a winners-allowance model.</li>
-                <li><strong style="color: var(--blue);">NeO, Station replacement and app polish track.</strong> Backup import (vultiagent-app#237 merged), vault migration (#236 draft), EAS/Expo release parity (#235). Polish wave: TrueSheet platform split (#196), polyfill hygiene (#243), onboarding state-reset (#241), AddVaultSheet (#245), lazy conversation creation (#246), shared sheet padding (#248).</li>
-                <li><strong style="color: var(--magenta);">Jibles, parked tool-consolidation jumbo retired, surgical replacement opens.</strong> The original four-PR stack (mcp-ts#30, agent-backend#128, app#164) closed; replaced with small surgical PRs across mcp-ts (#46-49: DeFi 9 to 5, Polymarket 7 to 3, Uniswap V3 reads, <code style="font-family: var(--font-mono); color: var(--cyan);">execute_*</code> family) and agent-backend (#167: CRUD action-discriminator for vault_coin, vault_chain, address_book). Targets Gemini's schema limits.</li>
-                <li><strong style="color: var(--cyan);">Jibles, ActionCard + two-phase approval in review</strong> (vultiagent-app#229), compound card walks consent to biometric to signed to terminal outcome (APPROVED, REJECTED) in one frame, status latches across chat reopens, ERC-20 calldata decoding so token transfers show the real recipient. Schedule-tool fix sweep merged today (agent-backend#168, vultisig-sdk#307).</li>
-                <li><strong style="color: var(--green);">Gomes, chain &amp; swap coverage tightens.</strong> Tokens-mvp (vultiagent-app#216 + agent-backend#144 + mcp-ts#39) blocks silent token-to-native downgrade for spl, sui-token, jetton, trc20. Rujira CCL signing (#213/#300/#143). chainId mismatch guard before MPC sign (#228). Sei + Hyperliquid gas floors. Hyperliquid mainnet chainId 999.</li>
+                <li><strong style="color: var(--magenta);">Jibles &mdash; agent transaction tools simplified across the app</strong> &mdash; replaced a sprawling family of per-chain tools with three unified ones (send / swap / contract call) the agent uses for every chain. Killed a class of "did the swap actually go through?" bugs by making the app wait for chain confirmation before showing a transaction as approved. Started rebuilding how the agent fetches balances so the AI can tell when its numbers are stale and refresh them on demand.</li>
+                <li><strong style="color: var(--cyan);">gomes + NeO &mdash; LUNC support and Cosmos staking</strong> &mdash; gomes wired the LUNC/USTC bridge to Osmosis end-to-end so users can move funds without leaving the app, plus polish on the receiving-chain side. NeO built Cosmos staking (delegate, undelegate, redelegate, claim rewards) plus a scheduler so users can set up recurring stakes. gomes also fixed a long-standing Ethereum bug where transactions were being silently dropped about 25 blocks in.</li>
+                <li><strong style="color: var(--green);">NeO &mdash; massive bug-clearance week</strong> &mdash; about 25 reliability and design issues fixed across the agent: text in chat now copyable, only the active "thinking" step animates instead of all of them, balances pre-fetch when chat opens, swap confirmation card matches Figma, vault-aware welcome chips, and agent runs no longer cancel when the user backgrounds the app. 59 merged PRs and 43k lines, the most volume on the team.</li>
+                <li><strong style="color: var(--blue);">NeO &mdash; Security pillar work (proposed mission)</strong> &mdash; wired in Blockaid (a transaction safety scanner used by Wallet Guard etc.) so risky transactions get flagged before signing. Locked down our analytics so identifying user data can't leak. Forces a fresh biometric check on every signature instead of one-and-done. Blockaid is now in canary rollout.</li>
+                <li><strong style="color: var(--amber);">Apotheosis &mdash; Vultiverse Airdrop sign-up is live, iOS resubmitted</strong> &mdash; the system now records who's signed up, separates legacy Station migrants from fresh users, and exposes a public counter for marketing. Quest-tracking landed too. iOS 5.0.0 resubmitted to Apple on Apr 29 with all three review fixes (display name, vault-setup screen, reviewer demo access).</li>
+                <li><strong style="color: var(--green);">Jibles &mdash; reliable execution and history storage</strong> &mdash; making sure the agent's tools actually run and the outcomes get recorded properly. Rewrote how the app reads transactions sent by the server so each chain has its own clean handler (fixes a Solana swap that was breaking on-device). Started moving the record of what the agent has executed off the device and onto the server, so the agent has a single source of truth for action history that survives an app restart.</li>
+                <li><strong style="color: var(--cyan);">gomes &mdash; drove other people's PRs to merge + dogfood polish</strong> &mdash; took the Cosmos swap signing work over the line (originally NeO's), hardened a Solana fee fix from an external contributor, and shipped 7 small UX fixes from his own dogfood: auth bar back-button keeps you in chat, fee row always shows, sessions panel handles signed-out states cleanly, scheduling screen no longer kicks you out on permission denial.</li>
             </ul>
         </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 3: NEXT WEEK
+         SLIDE 3: PRE-LAUNCH PILLARS
          =========================================== -->
-    <section class="slide" aria-label="Next Week">
+    <section class="slide" aria-label="Pre-Launch Pillars">
         <div class="slide-content">
-            <div class="badge reveal">Next Week</div>
-            <h2 class="reveal">Focus &amp; Decisions</h2>
-            <p class="section-desc reveal">Five focus areas, three decisions outstanding.</p>
+            <div class="badge reveal">Pre-Launch</div>
+            <h2 class="reveal">Three Pillars</h2>
+            <p class="section-desc reveal">Everything the team is actively shipping rolls up under one of these three. They're the lens for prioritisation between now and launch.</p>
 
-            <ul class="glow-list reveal">
-                <li><strong style="color: var(--cyan);">Land the surgical tool-consolidation stack.</strong> mcp-ts #46-49 (DeFi/Polymarket reads + <code style="font-family: var(--font-mono); color: var(--cyan);">execute_*</code> family), agent-backend #167 (CRUD action-discriminator), vultiagent-app #229 + #242 (renderers). Merge in repo order (mcp-ts, then agent-backend, then app). Retire legacy tool pairs once telemetry shows zero traffic.</li>
-                <li><strong style="color: var(--green);">Promote Station Android 5.0.0 to production</strong> once marketing aligns timing with the airdrop campaign. Unblock iOS TestFlight via ASC Admin keychain group declaration, currently blocked since Apr 17.</li>
-                <li><strong style="color: var(--magenta);">Continue Vultiverse Airdrop build.</strong> Stage 1 quest tracking against the verified foundations. AirdropClaim contract continues with NeO. Around 10 product decisions still needed from Strategy/Founder (slot counts, VULT amounts, eligibility window).</li>
-                <li><strong style="color: var(--amber);">Stage agent reliability v2 rollout.</strong> Flip <code style="font-family: var(--font-mono); color: var(--cyan);">RELIABILITY_V2_ENABLED</code> on a dev percentage first, then prod percentage, watching fail-rate telemetry between each step.</li>
-                <li><strong style="color: var(--text-muted);">Watch NeO's plate.</strong> SDK Unification, Agent Stability, AirdropClaim contract, and Station replacement migration all sit on one engineer. Reassess scope or pull in help if any track starts slipping.</li>
-                <li><strong style="color: var(--red);">Blockers</strong>, iOS TestFlight 5.0.0 (Apple-side keychain since Apr 17), pending product decisions on the airdrop campaign (slot counts, VULT amounts, eligibility window), and review bandwidth across 6 concurrent tool-consolidation surgical PRs spanning 3 repos.</li>
-            </ul>
+            <div class="phase-row reveal">
+                <div class="phase-card phase-card--1">
+                    <div class="phase-num">Pillar 1</div>
+                    <h3>Luna ecosystem</h3>
+                    <p>Terra/LUNC partnership: token support, swaps, staking, the Luna airdrop contract.</p>
+                    <ul class="check-list">
+                        <li class="done">LUNC/USTC bridge to Osmosis live</li>
+                        <li class="done">In-chain swaps on Terra v2 (Astroport) live</li>
+                        <li class="done">Cross-chain Cosmos transfers wired up</li>
+                        <li class="done">USTC in token list, send chip, denom display</li>
+                        <li class="done">Luna airdrop contract</li>
+                        <li class="wip">Cosmos staking (delegate / undelegate / claim) rolling out</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-card--2">
+                    <div class="phase-num">Pillar 2</div>
+                    <h3>App stability &amp; polish</h3>
+                    <p>Reliability rework, bug clearance, design fixes. The "feels solid" pillar.</p>
+                    <ul class="check-list">
+                        <li class="done">Agent transaction tools simplified across the app</li>
+                        <li class="wip">Balance fetching rebuilt &mdash; agent knows when numbers are stale</li>
+                        <li class="wip">Action history moves off device to the server (survives app restart)</li>
+                        <li class="wip">Per-chain transaction handlers (fixes Solana swap bugs)</li>
+                        <li class="wip">Security pillar &mdash; transaction scanner in canary, biometric on every signature</li>
+                        <li class="done">Chat-first onboarding &mdash; users can explore before creating a vault</li>
+                        <li class="wip">User-reported bug cluster &mdash; ~25 cleared, more queued</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-card--3">
+                    <div class="phase-num">Pillar 3</div>
+                    <h3>App release</h3>
+                    <p>Station app, iOS launch, Vultiverse Airdrop. Everything that has to be live for users.</p>
+                    <ul class="check-list">
+                        <li class="done">Station Android 5.0.0 ready, holding for iOS</li>
+                        <li class="done">Vultiverse airdrop sign-up live (boarding + tracking)</li>
+                        <li class="done">Quest tracking landed</li>
+                        <li class="wip">iOS 5.0.0 in Apple review queue (since Apr 29)</li>
+                        <li class="wip">Vultiverse airdrop claim contract &mdash; ~25%, scaffold built</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 

@@ -1,6 +1,6 @@
 ---
 id: v-uneu
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-30T02:07:51Z
@@ -45,3 +45,7 @@ SOL→PENGU swaps via the li.fi route fail at the Sign step with "Cannot sign: n
 **2026-04-30T04:19:11Z**
 
 Added diagnostic log at signAndBroadcast.ts:129 — captures topLevelKeys, swapTxKeys, swapTxDataType, and presence of common alt envelopes (transaction/tx_data/serialized_tx) when parseServerTx returns null. Next: repro SOL→PENGU swap on-device and capture the log to determine fix layer.
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#320

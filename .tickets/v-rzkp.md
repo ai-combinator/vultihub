@@ -1,6 +1,6 @@
 ---
 id: v-rzkp
-status: open
+status: closed
 deps: []
 links: [v-lmwx]
 created: 2026-04-29T00:00:00Z
@@ -80,3 +80,9 @@ Scope also covers two additional post-tool-text failure modes carried from v-lmw
 - **Don't ban colons and numbers wholesale.** Plenty of legitimate narrations use them ("Bridged: confirmed in 32s"). Ban bullet-list preambles specifically.
 - **Don't add `strings.Contains(prompt, ...)` tests.** Sean has explicitly flagged these as brittle (verifies copy not behavior). LLM round-trip via curl-replay is the right venue.
 - **`schedule_task` policy_ready card** — once that surface lands, fold it into the same rule and add a fixture. Out of scope for this ticket but flag it for the follow-up.
+
+## Notes
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/agent-backend#198 (DRAFT)

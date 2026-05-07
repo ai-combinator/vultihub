@@ -1,6 +1,6 @@
 ---
 id: v-mfno
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:40:34Z
@@ -42,3 +42,9 @@ Two-part filter:
 ## Open Questions
 - Exact filter mechanism — drop list vs category strip — pick whichever matches v-kmev precedent.
 - Copy for the redirect: tone consistency may need product input.
+
+## Notes
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/agent-backend#268 (open)

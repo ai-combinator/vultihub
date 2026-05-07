@@ -1,6 +1,6 @@
 ---
 id: v-repi
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:02:39Z
@@ -82,3 +82,7 @@ Cherry-picks will touch these; others should remain at their main state:
 **2026-04-23T23:42:37Z**
 
 Draft PR opened: https://github.com/vultisig/agent-backend/pull/165
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/agent-backend#165

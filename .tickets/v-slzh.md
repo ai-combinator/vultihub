@@ -1,6 +1,6 @@
 ---
 id: v-slzh
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-29T05:44:17Z
@@ -100,3 +100,7 @@ Tasks 1 (intent guard fixes ef41f50) and 2 (schema shrink + injection 779fbcb mc
 **2026-04-29T09:58:32Z**
 
 Draft PRs open: agent-backend#199, mcp-ts#65. Backend-mode E2E verified bug-driver (44 = 4/4) plus Cosmos/XRP/Sui sends. MCP wire probe confirmed schema slim + inject_from_address meta flag. Pre-existing tool-registry gaps for Tron/Cardano native sends documented as out-of-scope. v-slzh services left running on alt ports (mcp 9092, backend 8085) — user's existing dev stack on 9091/8084 untouched.
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#65 (merged) + vultisig/agent-backend#199 (DRAFT)

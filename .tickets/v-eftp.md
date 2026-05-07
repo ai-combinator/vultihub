@@ -1,70 +1,70 @@
 ---
 id: v-eftp
-status: open
+status: in_progress
 deps: []
-links: []
+links: [v-rfbq]
 created: 2026-05-03T22:44:35Z
-type: feature
-priority: 1
+type: bug
+priority: 0
 assignee: Jibles
 ---
-# execute_swap parallel fan-out + best-rate selection
+# execute_swap: provider-attributed all-fail quote errors
 
 ## Problem
-`execute_swap` uses sequential fallback (`asyncFallbackChain`) across providers — first success wins, not best rate. Two consequences: (a) users get whatever rate the first-attempted provider returned, even if a downstream provider had a tighter spread; (b) errors from individual providers leak the underlying provider's name and shape, causing the LLM to misinterpret single-provider failures as market-wide. The minimal v1 fix (separate ticket: pass `to_address` + aggregate errors) closes the headline UX bug; this ticket is the structural fix.
+When every eligible `execute_swap` quote provider fails, the SDK currently throws a single provider-order error. mcp-ts wraps that as `execute_swap: quote failed: <provider message>`, and the LLM can overgeneralize one provider-specific failure into "no liquidity exists anywhere."
 
-Reference pattern: `shapeshift-agentic/apps/agentic-server/src/tools/initiateSwap.ts:52-99` — `Promise.all` across providers, filter successes, pick best by output amount, aggregate errors when all fail, surface selected provider to the LLM.
+This is the remaining work after the broader fan-out/best-rate ticket was partially completed. The aim is narrow: make all-provider failure errors explicit, short, and provider-attributed.
 
 ## Background
-### Findings
-- Current behavior: `vultisig-sdk/packages/core/chain/swap/quote/findSwapQuote.ts:159-167` uses `asyncFallbackChain` (`packages/lib/utils/promise/asyncFallbackChain/index.ts:3-20`) — try one, fail, try next, throw last error.
-- Providers wired: KyberSwap, 1inch, LiFi (general); THORChain, MayaChain (native).
-- For EVM→EVM with contract address: general-first ordering; otherwise native-first via `shouldPreferGeneralSwap` (lines 155-157).
-- Quote shapes are NOT normalized today:
-  - Native: `{ expected_amount_out, fees: { total, total_bps } }`
-  - General: `{ dstAmount, provider, tx: { evm, solana }, ... }` (provider ∈ kyber|li.fi|1inch)
-  Direct numeric comparison requires netting fees + gas, which differ per provider:
-  - THORChain Ethereum inbound: gas-free (built into deposit), 30-150 bps protocol fee
-  - 1inch on Ethereum: `dstAmount` is pre-gas; gas can be $5-20+
-  - LiFi cross-chain: $5-50 bridge fees, embedded in quote
-  - KyberSwap: typically $0.50-5 gas
-- Subagent effort estimate: 140-170 LOC across 3 files, 2-3 days focused work + 1 day discovery/integration testing.
-- Test coverage to update: `findSwapQuote.kyber.test.ts` (rewrite to mock all 5 providers), `getNativeSwapQuote.test.ts` (add parallel poll), new fan-out test file. ~100+ LOC of test work.
-- KyberSwap affiliate config (`kyberSwapAffiliateConfig.source`) ties query volume to Vultisig's account — parallel fan-out 5×s the call rate; metering needs verifying.
-
-### External Context
-- ShapeShift reference: `/home/sean/Repos/shapeshift-agentic/apps/agentic-server/src/tools/initiateSwap.ts`.
+- `vultisig-sdk#356` already changed `findSwapQuote` to `Promise.allSettled` across eligible providers and select the best successful quote by comparable destination output. This means a failing provider no longer hides a succeeding provider.
+- The current SDK test explicitly pins the remaining bad behavior: `packages/core/chain/swap/quote/findSwapQuote.selection.test.ts` has "when all providers fail, propagates the first fetcher-order rejection".
+- The original ETH->VULT misroute has an adjacent mcp-ts guard merged in `vultisig/mcp-ts#80` on 2026-05-04. It catches `to_chain=THORChain` plus EVM-shaped `to_address` / pool-id `to_symbol` and directs the model to retry with `to_chain=<fromChain>`.
+- `v-rfbq` / GH #429 is the bug driver for the user-visible "no liquidity anywhere" hallucination.
 
 ## Current Thinking
-Port ShapeShift's pattern with three Vultisig-specific adaptations:
+Add provider labels to `findSwapQuote` fetchers and replace the all-rejected loop with an aggregate error such as:
 
-1. **Provider-eligibility filter before fan-out**: filter the provider list based on swap pairing first (e.g. THORChain only for chains with THORChain inbound vaults; LiFi for cross-chain; etc.) — don't fan out 5× when only 2 are eligible.
-2. **Affiliate-aware prioritization in the comparator**: when multiple providers return successful quotes, prioritize affiliate-enabled ones (KyberSwap, 1inch, LiFi) over THORChain in tiebreaks. Preserves the business intent of `shouldPreferGeneralSwap` without the rigid sequential ordering.
-3. **Build a normalization layer** (`comparators.ts`, ~30-50 LOC) that nets out gas + protocol fees + affiliate fees so quotes are comparable. Need gas estimation per general provider — adds latency to the parallel fan-out.
+`No swap route found after trying: KyberSwap: <short reason>; 1inch: <short reason>; LiFi: <short reason>; THORChain: <short reason>; MayaChain: <short reason>.`
 
-When all providers fail, return aggregated error message (`"no route — KyberSwap: ..., 1inch: ..., LiFi: ..."`) so the LLM has full visibility.
+Keep this as a plain thrown `Error` for now so the external interface remains unchanged. The mcp-ts wrapper will continue surfacing it as `execute_swap: quote failed: ...`.
+
+Preserve the current dust-threshold special case: if any provider fails with the dust threshold signal, keep returning `Swap amount too small. Please increase the amount to proceed.`
 
 ## Constraints
-- Filter eligible providers per swap pairing — don't blindly fan out to all 5.
-- Affiliate-enabled providers (KyberSwap, 1inch, LiFi) prioritized in tiebreaks. Affiliate revenue is real and must not be lost to flat best-rate selection.
-- Latency tradeoff acknowledged — Promise.all waits for slowest; net-out is on slowest-provider path. MCP timeout (likely 10s) must accommodate.
-- Don't break the existing `execute_swap` external interface — quote envelope shape is `ExecutePrepResult`; this is internal to `findSwapQuote`.
-
-## Assumptions
-- Vultisig's relay can absorb 5× quote-call volume per swap without quota issues. **Verify before deployment** — KyberSwap source-account metering and LiFi SDK rate limits especially.
-- Affiliate fees configured uniformly enough across general providers that a single bps adjustment in the comparator captures the business preference. If affiliate bps vary materially, tiebreak logic gets more complex.
+- Do not change `execute_swap` or `findSwapQuote` call signatures.
+- Keep provider reasons short enough for an LLM and a card error. Cap or truncate noisy API dumps.
+- Only include providers actually attempted.
+- Do not add more provider calls. Fan-out already exists.
 
 ## Non-goals
-- Replacing or renaming the `execute_swap` MCP-tool surface — change scoped to `findSwapQuote` internals.
-- Changing per-provider quote APIs themselves.
-- Rebuilding `asyncFallbackChain` for other call sites (only `findSwapQuote` uses it for swap routing).
+- Best-net-output comparator beyond what `vultisig-sdk#356` already shipped.
+- Gas / fee normalization across providers.
+- Affiliate-aware tie-breaking changes.
+- New `to_address` enrichment in agent-backend or mcp-ts. That can be a follow-up if the all-fail error remains insufficient.
+- Replacing or renaming `execute_swap`.
 
-## Dead Ends
-- Naive `parseFloat(buyAmount) > parseFloat(buyAmount)` (ShapeShift's literal pattern). Reason: Vultisig's heterogeneous mix of native + general providers has wildly different fee structures; comparing pre-gas amounts unfairly favors high-gas providers.
-- Pure prompt fix to teach the model "try other providers if one fails". Sequential fallback already swallows the other failures, so the model never sees them. Plus that's the v1 minimal fix's job, not this one.
+## Acceptance Criteria
+- [ ] `findSwapQuote.selection.test.ts` no longer expects a first provider-order rejection when all providers fail.
+- [ ] New/updated SDK test asserts all-fail error names every provider actually attempted.
+- [ ] Error messages include friendly provider names: `KyberSwap`, `1inch`, `LiFi`, `THORChain`, `MayaChain`.
+- [ ] Error reason text is sanitized/truncated so a single provider cannot dump a huge API response into the LLM.
+- [ ] Existing dust-threshold tests still pass unchanged.
+- [ ] Existing successful-provider tests still pass: a failing provider must not hide a succeeding one.
 
 ## Open Questions
-- Affiliate-bps adjustment in the comparator: fixed bps per provider, or read from each provider's own fee config? Latter is cleaner but more wiring.
-- Gas estimation for parallel quotes — fetch live or estimate from cached gas oracle? Live adds an RPC call; cached risks staleness.
-- Per-provider error visibility — joined string or structured `{ provider, error }[]`? MCP tool consumes a string but a structured shape would help downstream.
-- Cross-PR coordination with the v1 minimal fix ticket — this ticket assumes that one has shipped and aggregated-error format already exists.
+- Joined string vs custom error class. Default to joined string unless implementation gets cleaner with a tiny internal class.
+- Truncation length: start around 160 chars/provider unless surrounding patterns suggest another limit.
+
+## Notes
+
+**2026-05-05T05:33:00Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/436
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch
+
+**2026-05-06T22:08:00Z**
+
+Scope stripped after root-cause pass for `v-rfbq` / GH #429. `vultisig-sdk#356` already delivered parallel all-settled quote selection and best successful quote by comparable destination output. `mcp-ts#80` already addresses the headline ETH->VULT same-chain EVM token misrouted to THORChain. Remaining actionable work here is only provider-attributed all-fail quote errors.

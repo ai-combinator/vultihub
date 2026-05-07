@@ -1,6 +1,6 @@
 ---
 id: v-txta
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:04:12Z
@@ -60,3 +60,7 @@ Apply the `getOrElse("")` → fail-fast change so missing env var surfaces a cle
 **2026-04-23T23:43:10Z**
 
 Draft PR opened: https://github.com/vultisig/vultiagent-app/pull/239
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#239

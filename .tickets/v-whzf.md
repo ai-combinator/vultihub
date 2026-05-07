@@ -1,6 +1,6 @@
 ---
 id: v-whzf
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:00:43Z
@@ -73,3 +73,7 @@ Also cherry-pick any subsequent typo/category fixes that touched `src/tools/unis
 **2026-04-23T23:45:36Z**
 
 Draft PR opened: https://github.com/vultisig/mcp-ts/pull/48
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/mcp-ts#48

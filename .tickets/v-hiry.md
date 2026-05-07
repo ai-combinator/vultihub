@@ -1,6 +1,6 @@
 ---
 id: v-hiry
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:02:05Z
@@ -77,3 +77,7 @@ This ticket keeps all 9 legacy tools registered in a `legacy_defi` gated categor
 **2026-04-23T23:43:02Z**
 
 Draft PR opened: https://github.com/vultisig/mcp-ts/pull/46
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#46 (open, in review)

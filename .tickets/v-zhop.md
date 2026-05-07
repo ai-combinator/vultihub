@@ -1,6 +1,6 @@
 ---
 id: v-zhop
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:02:15Z
@@ -71,3 +71,7 @@ This is a subtler version of Pattern 4a (hard cuts without alias) applied to a s
 **2026-04-23T23:44:07Z**
 
 Draft PR opened: https://github.com/vultisig/mcp-ts/pull/47
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#47 (open, in review)

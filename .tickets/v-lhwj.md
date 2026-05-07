@@ -1,6 +1,6 @@
 ---
 id: v-lhwj
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-27T21:11:26Z
@@ -42,3 +42,9 @@ Done when:
 - [ ] vultiagent-app: bumped to the published SDK version that contains `/rn-preamble`
 - [ ] vultiagent-app: local `polyfills.ts` deleted; entry imports `@vultisig/sdk/rn-preamble` as first statement
 - [ ] iOS + Android boot to home screen on both platforms
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: pre-launch deprioritize — RN preamble test infra + polyfill migration is plumbing-only

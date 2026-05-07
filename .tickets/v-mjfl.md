@@ -1,6 +1,6 @@
 ---
 id: v-mjfl
-status: open
+status: closed
 deps: []
 links: [ab-dflp, mcp-ts#49]
 created: 2026-04-27T08:09:38Z
@@ -67,3 +67,7 @@ Forward-compat contract says missing `quest_metadata` is "never an error" (per `
 PR #49 already documents this gap explicitly in its body and test plan ("Reviewer: confirm agent-backend knownCalldataToolPrefixes follow-up ticket is in flight before merge"). This ticket IS that follow-up.
 
 The mcp-ts in-flight PR #50 (`feat/quest-metadata-amount-usd-fallback`) layers price-oracle USD fallback on top of build_swap_tx / build_evm_tx — both deleted by #49. PR #50 must rebase to target the new emission sites in `execute_swap` / `execute_contract_call` before it can merge. Not a blocker for this ticket; just note for sequencing.
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/agent-backend#188

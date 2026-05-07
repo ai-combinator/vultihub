@@ -1,6 +1,6 @@
 ---
 id: v-hipx
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:04:36Z
@@ -74,3 +74,7 @@ Ideally: also include the `addressDerivation.ts:75-112` error-propagation fix fr
 **2026-04-23T23:43:56Z**
 
 Draft PR opened: https://github.com/vultisig/vultiagent-app/pull/240
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#240

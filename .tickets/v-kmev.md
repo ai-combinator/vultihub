@@ -1,6 +1,6 @@
 ---
 id: v-kmev
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-01T07:37:01Z
@@ -165,3 +165,9 @@ All of the above belong to the optional consolidation ticket that extends this o
 - For per-chain MCP tools that currently return text (EVM/UTXO), do we add `as_of` as a new line in the text result, or migrate the tool's whole output to JSON? Cheapest for `parseBalanceResult` is probably an extra line, but JSON might be cleaner long-term. Decide during implementation per-tool.
 - After stripping `chain_balance` category, does `tool_filter.go` have any other side-effects to clean up? Confirm the filter is the only consumer.
 - Is there anywhere else in the prompt that references `### Balances (live)` semantically (examples, anti-examples)? Scan `prompt.go` for stragglers.
+
+## Notes
+
+**2026-05-04T23:09:20Z**
+
+auto-closed: tracked in PR vultisig/mcp-ts#76 (merged) + vultisig/vultiagent-app#346 + vultisig/agent-backend#236 (open)

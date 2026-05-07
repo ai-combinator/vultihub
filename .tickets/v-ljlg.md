@@ -5,7 +5,7 @@ deps: []
 links: []
 created: 2026-04-27T20:51:41Z
 type: task
-priority: 2
+priority: 3
 assignee: Jibles
 external-ref: vultisig/mcp-ts#52
 ---
@@ -101,3 +101,9 @@ Ticker uppercasing is a quick win (~10 lines + test). Decimals/formatted is a se
 - Merged PR: https://github.com/vultisig/mcp-ts/pull/52
 - Squash commit: vultisig/mcp-ts@7004de19
 - Reviewer: NeOMakinG (Codex 5.4 adversarial pass)
+
+## Notes
+
+**2026-05-05T00:19:15Z**
+
+demoted p2 → p3 (meh bucket: internal refactor / polish, no user-facing payoff pre-launch)

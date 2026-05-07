@@ -40,3 +40,13 @@ Symptom: model passes the wrong identifier, gets a meaningless error, then eithe
 - Where does `get_tx_status` live — `mcp-ts/src/tools/utility/` is likely. Confirm during planning.
 - Strict vs loose validation — strict regex (`/^0x[0-9a-fA-F]{64}$/` for EVM) or just length check?
 - Error message wording: name the issue ("looks like an address, not a tx hash") or just "invalid format"?
+
+## Notes
+
+**2026-05-05T05:32:36Z**
+
+migrated to GH issue: https://github.com/vultisig/vultiagent-app/issues/432
+
+**2026-05-05T05:34:06Z**
+
+kept open locally — GH issue is a duplicate, local remains canonical scratch

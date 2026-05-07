@@ -1,6 +1,6 @@
 ---
 id: va-tbdw
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-23T02:54:11Z
@@ -87,3 +87,9 @@ If the tx reverts (OOG, slippage overflow, router revert), the UI never re-check
 - Buffer strategy: apply a provider-specific multiplier in `mcp-ts` (e.g. 1.2× for Kyber on Arbitrum, 1.3× for THORChain token legs), or do a full `eth_estimateGas` simulation at build time? Simulation is authoritative but adds an RPC hop.
 - Receipt-wait UX: should the card show a dedicated `BROADCASTING` / `CONFIRMING` intermediate state between sign-complete and chain-confirm, or keep the current spinner up until receipt arrives? Affects 517 jest tests / 3-6 UI components.
 - Should we also instrument the `signAndBroadcast` path with a per-stage log (broadcast-start, broadcast-accept, receipt-polled, receipt-status) so future OOG reports have observability without needing a fresh repro?
+
+## Notes
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#296 + vultisig/mcp-ts#62

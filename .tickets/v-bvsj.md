@@ -1,6 +1,6 @@
 ---
 id: v-bvsj
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-23T23:07:21Z
@@ -121,3 +121,7 @@ Pure renames are deferred indefinitely — not worth the migration cost.
 **2026-04-23T23:52:47Z**
 
 Draft PR opened: https://github.com/vultisig/agent-backend/pull/167
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/agent-backend#167

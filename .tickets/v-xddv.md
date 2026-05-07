@@ -1,6 +1,6 @@
 ---
 id: v-xddv
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-04-29T02:03:49Z
@@ -48,3 +48,7 @@ When the agent emits an `execute_swap` (or `execute_send` / `execute_contract_ca
 **2026-04-29T04:28:05Z**
 
 Gate added in AssistantMessageView.tsx on worktree-v-xddv: `if (isLoading && toolName.startsWith('execute_')) return null` sits between the receive-multichain coalesce and resolveToolUI. True conditional return — useTransactionFlow + ApprovalContext don't arm mid-stream. Lint + tsc green. Worktree at .claude/worktrees/v-xddv awaiting batch merge.
+
+**2026-05-04T23:09:10Z**
+
+auto-closed: merged via vultisig/vultiagent-app#293

@@ -1,6 +1,6 @@
 ---
 id: v-xgqo
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-30T07:10:38Z
@@ -74,3 +74,9 @@ Revert the `tx_encoding` inner-shape contract that the execute_* family introduc
 - Six in-flight tickets (v-bbds, v-rzkp, v-uwaj, v-mjfl, v-rfqt, v-ujuc) are built on the execute_* contract — outer wrapper untouched, but verify none of them introspect `tx_encoding` directly.
 - The existing PR #320 has 1813 passing tests including new canonical tests. The revert removes those test files; lose the regression coverage they added against canonical shapes (mooted because canonical shapes won't exist, but if the migration ever resurfaces those tests are gone).
 - Coordinate landing order: mcp-ts revert must merge BEFORE the vultiagent-app revert lands in production, or one mcp-ts deploy will break unmigrated app builds. Reverse the sequence and the app revert breaks the in-flight canonical mcp-ts deploy.
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: forward path chosen — app#320 merged; reverting tx_encoding inner shapes no longer an option

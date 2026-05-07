@@ -1,6 +1,6 @@
 ---
 id: v-ujuc
-status: open
+status: closed
 deps: [v-srjz]
 links: []
 created: 2026-04-20T06:56:39Z
@@ -65,3 +65,9 @@ After migration, the retirement pattern per chain is: extend `execute_send` hand
 - Sui coin selection must be deterministic for the same intent or Layer 1 parity tests flap.
 - XRP IOU sends are a separate surface from native XRP — this ticket is XRP sends only; IOU is a follow-up.
 - Client `validateTxArgsShape` is permissive for solana/ripple/tron/ton/sui families — don't tighten in this ticket.
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: gated on v-srjz which is killed; falls with it

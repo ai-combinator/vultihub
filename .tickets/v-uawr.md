@@ -1,6 +1,6 @@
 ---
 id: v-uawr
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-05-03T22:42:19Z
@@ -35,3 +35,9 @@ Neither type is registered in `vultiagent-app/src/features/agent/lib/toolLabels.
 - On unknown type, what's the fallback — drop the action silently, replace with a "this isn't supported yet" text response, or surface a structured error?
 - Where does the registry live canonically — `toolLabels.ts` is frontend; is there a server-side equivalent we should validate against, or do we need to ship one?
 - How does the model invent these — is the prompt suggesting type names indirectly, or pattern-matching from examples? Worth a glance during planning.
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: per Sean — dropping from active queue

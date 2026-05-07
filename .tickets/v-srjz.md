@@ -1,6 +1,6 @@
 ---
 id: v-srjz
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-20T06:56:03Z
@@ -61,3 +61,9 @@ The SDK already owns: the resolver layer (`packages/core/mpc/keysign/chainSpecif
 - Don't move React-specific code. The SDK function should be framework-agnostic; React hooks (`useTransactionFlow`, `useToolExecution`) call into it.
 - App still needs to render stepper progress during signing — design the SDK API to emit progress events (callbacks / async iterator) rather than forcing polling.
 - This ticket is vultiagent-app + vultisig-sdk only. mcp-ts and agent-backend updates only if their runtime depends on SDK shape.
+
+## Notes
+
+**2026-05-05T00:19:03Z**
+
+killed: pre-launch defer — App→SDK chain-logic migration is huge-scope architectural doctrine work; finish in-flight first

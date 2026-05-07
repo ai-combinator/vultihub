@@ -1,6 +1,6 @@
 ---
 id: v-sdvy
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-04-21T03:30:26Z
@@ -174,3 +174,9 @@ The agent-backend + mcp-ts + vultiagent-app + vultisig-sdk stack has accumulated
 ### SDK reactive changes
 - If a core tool audit reveals SDK gap, fix in same PR or separate ticket? (Recommendation: same PR to minimize coordination; confirm.)
 - Any SDK chain-alias / `normalizeChain` extensions needed for the popular-chain reduction?
+
+## Notes
+
+**2026-05-05T02:40:49Z**
+
+killed: per Sean — strategic decision-making, not engineering work
